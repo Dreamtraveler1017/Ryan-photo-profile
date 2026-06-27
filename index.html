@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ryan · Photography</title>
+<!-- 引入 Playfair Display (英文) 以及 Noto Serif JP/TC (中日文完美適配) -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Noto+Serif+JP:wght@300;400&family=Noto+Serif+TC:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d0d0d;--bg2:#141414;--fg:#EDEBE6;--fg-dim:#525050;--fg-mid:#8a8785;
+  --accent:#3E5F8A;--border:rgba(255,255,255,.07);
+  --sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  /* 更新 Serif 字體族：英文優先，遇到中日文自動切換高質感宋體 */
+  --serif:'Playfair Display', 'Noto Serif JP', 'Noto Serif TC', serif;
+}
+html,body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-weight:300;min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+button{background:none;border:none;cursor:pointer;font-family:var(--sans);}
+
+/* ══ PAGES ══ */
+.page{display:none;min-height:100vh;}
+.page.active{display:block; animation: fadeIn .6s cubic-bezier(0.16,1,0.3,1);}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ══ NAV ══ */
+nav.top{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:32px 48px;
+  border-bottom:1px solid transparent;
+  transition:border-color .3s, background .3s, padding .3s;
+}
+nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdrop-filter:blur(12px);padding:20px 48px;}
+.nav-logo{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--fg);cursor:pointer; transition: color .3s;}
+.nav-logo:hover{color:var(--fg-mid);}
+.nav-links{display:flex;gap:40px;}
+.nav-links a{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--fg-dim);text-transform:uppercase;transition:color .3s;}
+.nav-links a:hover,.nav-links a.active{color:var(--fg);}
+
+/* ══ HERO & FILMSTRIP ANIMATION ══ */
+.hero {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+.hero-film-bg {
+  position: absolute;
+  inset: -10%;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  z-index: 1;
+  transform: scale(1.05); 
+}
+.film-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.85) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+.film-col { display: flex; flex-direction: column; width: 20%; min-width: 220px; }
+.film-track { display: flex; flex-direction: column; gap: 8px; will-change: transform; }
+.film-item { width: 100%; background: var(--bg2); }
+.film-item img {
+  display: block; width: 100%; height: auto; object-fit: cover;
+  filter: grayscale(0.5) contrast(1.1) brightness(0.8); transition: filter 0.5s;
+}
+.col-up .film-track { animation: scrollUp 45s linear infinite; }
+.col-down .film-track { animation: scrollDown 55s linear infinite; }
+.fast { animation-duration: 35s !important; }
+.slow { animation-duration: 65s !important; }
+.hero-film-bg:hover .film-track { animation-play-state: paused; }
+.hero-film-bg:hover .film-item img { filter: grayscale(0) contrast(1) brightness(0.9); }
+
+@keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+@keyframes scrollDown { 0% { transform: translateY(-50%); } 100% { transform: translateY(0); } }
+
+.hero-content {
+  position: relative; z-index: 10; text-align: center;
+  display: flex; flex-direction: column; align-items: center; padding: 0 24px;
+}
+.hero-title-main {
+  font-family: var(--serif); font-size: clamp(60px, 10vw, 130px); font-weight: 400;
+  letter-spacing: -0.01em; color: #fff; margin-bottom: 20px; line-height: 1;
+  text-shadow: 0 10px 40px rgba(0,0,0,0.8);
+}
+.hero-subtitle {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em;
+  color: rgba(255,255,255,0.7); text-transform: uppercase; margin-bottom: 48px;
+}
+.hero-cta {
+  padding: 16px 48px; border: 1px solid rgba(255,255,255,0.3);
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+  color: #fff; text-transform: uppercase; cursor: pointer; background: transparent;
+  transition: all .4s cubic-bezier(0.16,1,0.3,1); backdrop-filter: blur(4px);
+}
+.hero-cta:hover { background: #fff; color: #000; transform: translateY(-3px); border-color: #fff; }
+
+/* ══ WORKS & DETAIL HEADER ══ */
+.works-header, .detail-header {
+  padding: 180px 48px 60px;
+  display: flex; flex-direction: column; align-items: flex-start;
+}
+.detail-header .back {
+  font-family: var(--mono); font-size: 9px; color: var(--fg-dim); letter-spacing: .25em;
+  cursor: pointer; text-transform: uppercase; transition: color .3s; display: inline-flex; align-items: center; gap: 12px;
+}
+.detail-header .back::before { content: ''; display: block; width: 16px; height: 1px; background: var(--fg-dim); transition: width .3s, background .3s; }
+.detail-header .back:hover { color: var(--fg); }
+.detail-header .back:hover::before { width: 24px; background: var(--fg); }
+.works-header h1, .detail-header h1 {
+  font-family: var(--serif); font-size: clamp(48px, 7vw, 96px); font-weight: 400;
+  letter-spacing: -0.01em; line-height: 1.1; margin: 24px 0 16px;
+}
+.detail-meta { font-family: var(--mono); font-size: 10px; color: var(--fg-dim); letter-spacing: .15em; text-transform: uppercase; }
+
+/* ══ WORKS LIST (BLOCK-BASED ROWS) ══ */
+.works-list { padding: 0 48px 120px; display: flex; flex-direction: column; gap: 80px; }
+.works-cities { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+.series-card { position: relative; overflow: hidden; cursor: pointer; background: var(--bg2); aspect-ratio: 3/4; }
+.card-cover { width: 100%; height: 100%; object-fit: cover; filter: brightness(.65); transition: filter .5s, transform .6s; }
+.series-card:hover .card-cover { filter: brightness(.8); transform: scale(1.03); }
+
+.works-singles { width: 100%; }
+.singles-card-wrap { position: relative; cursor: pointer; background: var(--bg2); aspect-ratio: 24/7; }
+.singles-card { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr; gap: 3px; height: 100%; }
+.singles-thumb { position: relative; overflow: hidden; background: var(--bg2); width: 100%; height: 100%; }
+.singles-thumb img {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  object-fit: cover; filter: brightness(.8); transition: opacity 1.2s ease-in-out, filter .4s;
+}
+.singles-thumb:hover img { filter: brightness(1); }
+.singles-card-wrap:hover .singles-thumb img { filter: brightness(.95); }
+
+.works-astro { width: 100%; }
+.astro-row { position: relative; overflow: hidden; background: var(--bg2); cursor: pointer; aspect-ratio: 24/7; }
+.astro-row img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.6) saturate(.7); transition: filter .5s, transform .6s; }
+.astro-row:hover img { filter: brightness(.8) saturate(1); transform: scale(1.03); }
+
+/* Block Labels */
+.card-label, .singles-label, .astro-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; z-index: 10; }
+.card-label { background: linear-gradient(transparent,rgba(0,0,0,.7)); }
+.singles-label { background: linear-gradient(transparent,rgba(0,0,0,.65)); pointer-events: none; }
+.astro-label { display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(transparent,rgba(0,0,0,.5)); pointer-events: none; }
+.card-label h2, .singles-label h2, .astro-label h2 { font-size: clamp(24px,3vw,40px); font-family: var(--serif); font-weight: 400; letter-spacing: -.01em; margin-bottom: 4px; }
+.card-label small, .singles-label small, .astro-label small { font-family: var(--mono); font-size: 9px; letter-spacing: .18em; color: rgba(255,255,255,.5); text-transform: uppercase; }
+
+/* ══ SINGLES MASONRY GRID ══ */
+.singles-grid { padding: 0 48px 80px; column-count: 4; column-gap: 2px; }
+.sg-item { position: relative; overflow: hidden; cursor: pointer; break-inside: avoid; margin-bottom: 2px; background: var(--bg2); }
+.sg-item img { display: block; width: 100%; height: auto; object-fit: cover; filter: brightness(0.8) contrast(1.05); transition: filter 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform, filter; }
+.sg-item:hover img { filter: brightness(1) contrast(1); transform: scale(1.03); }
+.sg-item.skel { aspect-ratio: 3/2; }
+
+/* ══ ASTRO 2-COLUMN GRID ══ */
+.astro-grid { padding: 0 48px 80px; column-count: 2; column-gap: 6vw; max-width: 1400px; margin: 0 auto; }
+.astro-item { position: relative; overflow: hidden; cursor: pointer; break-inside: avoid; margin-bottom: 6vw; background: var(--bg2); }
+.astro-item img { display: block; width: 100%; height: auto; object-fit: cover; filter: brightness(0.8) contrast(1.05); transition: filter 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform, filter; }
+.astro-item:hover img { filter: brightness(1) contrast(1); transform: scale(1.03); }
+.astro-item.skel { aspect-ratio: 4/5; }
+
+/* ══ SERIES TABS & STRIPS ══ */
+.series-tabs {
+  display: flex;
+  gap: 16px;
+  padding: 0 48px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.series-tab {
+  font-family: var(--serif);
+  font-size: clamp(22px, 2.5vw, 36px); 
+  letter-spacing: 0.02em;
+  color: var(--fg-dim);
+  padding: 20px 24px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color .3s, border-color .3s;
+  white-space: nowrap;
+}
+.series-tab:hover { color: var(--fg); }
+.series-tab.active { color: var(--fg); border-bottom-color: var(--fg); } 
+
+.strips-area{padding:40px 0;}
+.strip-block{margin-bottom:32px;}
+.strip-block-label{font-family:var(--mono);font-size:11px;color:var(--fg-dim);letter-spacing:.2em;text-transform:uppercase;padding:0 48px;margin-bottom:20px;display:flex;align-items:center;gap:16px;}
+.strip-block-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.strip-wrap{overflow:hidden;}
+.strip{display:flex;gap:8px;width:max-content;animation:march 50s linear infinite;}
+.strip-wrap.rev .strip{animation-direction:reverse;animation-duration:65s;}
+.strip-wrap:hover .strip{animation-play-state:paused;}
+@keyframes march{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.photo-card{position:relative;flex-shrink:0;overflow:hidden;cursor:pointer;border-radius:1px;}
+.photo-card img{display:block;object-fit:cover;filter:brightness(.85) saturate(.9);transition:filter .4s,transform .5s;}
+.photo-card:hover img{filter:brightness(1) saturate(1);transform:scale(1.03);}
+.photo-card .exif{position:absolute;bottom:8px;left:8px;right:8px;font-family:var(--mono);font-size:8px;letter-spacing:.06em;color:rgba(255,255,255,.8);text-shadow:0 1px 4px rgba(0,0,0,.9);opacity:0;transform:translateY(3px);transition:opacity .3s,transform .3s;}
+.photo-card:hover .exif{opacity:1;transform:translateY(0);}
+
+/* ══ ABOUT PAGE ══ */
+.about-wrap{max-width:680px;margin:0 auto;padding:180px 48px 80px;}
+.about-wrap h1{font-family:var(--serif);font-size:clamp(48px,6vw,80px);font-weight:400;letter-spacing:-.01em;margin-bottom:56px;}
+.about-wrap p{font-size:15px;line-height:2;color:rgba(237,235,230,.7);margin-bottom:28px;}
+.about-gear{margin-top:64px;padding-top:40px;border-top:1px solid var(--border);}
+.about-gear h3{font-family:var(--mono);font-size:9px;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;}
+.about-gear p{font-family:var(--mono);font-size:11px;color:var(--fg-dim);line-height:2;}
+
+/* ══ SETUP ══ */
+#setup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:200;align-items:flex-start;justify-content:center;overflow-y:auto;padding:80px 20px;}
+#setup-overlay.open{display:flex;}
+.setup-box{border:1px solid var(--border);padding:52px 48px;max-width:640px;width:100%;background:#0d0d0d;}
+.setup-box h2{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--accent);margin-bottom:8px;text-transform:uppercase;}
+.setup-box .setup-desc{font-size:12px;line-height:1.8;color:var(--fg-mid);margin-bottom:32px;}
+.setup-section{margin-bottom:36px;}
+.setup-section-title{font-family:var(--mono);font-size:9px;color:var(--fg-dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.series-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+.series-row input.name-inp{width:140px;flex-shrink:0;}
+.series-row input.url-inp{flex:1;}
+.series-row .del-btn{font-family:var(--mono);font-size:11px;color:var(--fg-dim);cursor:pointer;padding:0 6px;transition:color .2s;flex-shrink:0;}
+.series-row .del-btn:hover{color:#e74c3c;}
+.add-series-btn{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--accent);cursor:pointer;margin-top:8px;display:inline-block;transition:opacity .2s;}
+.add-series-btn:hover{opacity:.7;}
+.inp{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:2px;padding:10px 12px;color:var(--fg);font-family:var(--mono);font-size:11px;outline:none;transition:border-color .2s;width:100%;}
+.inp:focus{border-color:var(--accent);}
+.inp::placeholder{color:var(--fg-dim);opacity:.5;}
+.inp-row{margin-bottom:16px;}
+.inp-row label{display:block;font-family:var(--mono);font-size:8px;color:var(--fg-dim);letter-spacing:.15em;margin-bottom:6px;text-transform:uppercase;}
+.btn-save{margin-top:24px;width:100%;padding:14px;background:var(--accent);color:var(--fg);border:none;font-family:var(--mono);font-size:11px;letter-spacing:.12em;cursor:pointer;border-radius:2px;transition:opacity .2s;}
+.btn-save:hover{opacity:.85;}
+.setup-close{position:absolute;top:28px;right:36px;font-family:var(--mono);font-size:10px;color:var(--fg-dim);cursor:pointer;letter-spacing:.1em;}
+.setup-close:hover{color:var(--fg);}
+
+/* ══ LIGHTBOX ══ */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:300;align-items:center;justify-content:center;flex-direction:column;gap:14px;cursor:zoom-out;}
+#lightbox.open{display:flex;}
+#lightbox img{max-width:90vw;max-height:82vh;object-fit:contain;box-shadow:0 0 80px rgba(0,0,0,.8);}
+#lightbox .lb-meta{font-family:var(--mono);font-size:9px;color:var(--fg-dim);letter-spacing:.1em;}
+#lightbox .lb-close{position:fixed;top:24px;right:32px;font-family:var(--mono);font-size:10px;color:var(--fg-dim);cursor:pointer;letter-spacing:.1em;}
+#lightbox .lb-close:hover{color:var(--fg);}
+
+/* ══ LOADING SKELETON ══ */
+.skel{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:1px;}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.empty-msg{font-family:var(--mono);font-size:10px;color:var(--fg-dim);letter-spacing:.1em;padding:40px 48px;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1200px){ .singles-grid { column-count: 3; } }
+@media(max-width:768px){
+  nav.top{padding:24px;}
+  nav.top.scrolled{padding:20px 24px;}
+  .works-header,.detail-header,.about-wrap{padding-left:24px;padding-right:24px;}
+  
+  .works-list { padding: 0 24px 60px; gap: 48px; }
+  .works-cities { grid-template-columns: 1fr; gap: 3px; }
+  .series-card { aspect-ratio: 4/3; }
+  .singles-card-wrap { aspect-ratio: 1/1; }
+  .singles-card { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+  .astro-row { aspect-ratio: 4/3; }
+
+  .series-tabs,.singles-grid{padding-left:24px;padding-right:24px;}
+  .strip-block-label{padding:0 24px;}
+  .film-col { width: 33.33%; min-width: 150px; } 
+  .singles-grid { column-count: 2; padding: 0 24px 60px; }
+  .astro-grid { column-count: 1; padding: 0 24px 60px; column-gap: 0; }
+  .astro-item { margin-bottom: 24px; }
+}
+@media(max-width:480px){ .singles-grid { column-count: 1; } }
+@media(prefers-reduced-motion:reduce){ .film-track, .strip { animation: none !important; transform: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top" id="topnav">
+  <div class="nav-logo" onclick="goPage('home')">Ryan · Photography</div>
+  <div class="nav-links">
+    <a onclick="goPage('works')" id="nav-works">Works</a>
+    <a onclick="goPage('about')" id="nav-about">About</a>
+    <a onclick="openSetup()" style="color:var(--fg-dim)">⚙</a>
+  </div>
+</nav>
+
+<!-- ══ HOME ══ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-film-bg" id="hero-film-bg">
+      <div class="film-overlay"></div>
+      <div class="film-cols-container" style="display:flex; gap:8px; width:100%; justify-content:center;" id="film-container"></div>
+    </div>
+    <div class="hero-content">
+      <h1 class="hero-title-main" id="home-name">Ryan</h1>
+      <div class="hero-subtitle">Eyes Between Streets & Stars</div>
+      <button class="hero-cta" onclick="goPage('works')">View Works</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WORKS ══ -->
+<div class="page" id="page-works">
+  <div class="works-header"><h1>Works</h1></div>
+  <div class="works-list" id="works-list"></div>
+</div>
+
+<!-- ══ SERIES DETAIL ══ -->
+<div class="page" id="page-detail">
+  <div class="detail-header">
+    <div class="back" onclick="goPage('works')">Works</div>
+    <h1 id="detail-title">City Collections</h1>
+    <div class="detail-meta" id="detail-meta"></div>
+  </div>
+  <div class="series-tabs" id="series-tabs"></div>
+  <div class="strips-area" id="strips-area"></div>
+</div>
+
+<!-- ══ SINGLES DETAIL ══ -->
+<div class="page" id="page-singles">
+  <div class="detail-header">
+    <div class="back" onclick="goPage('works')">Works</div>
+    <h1 id="singles-title">Singles</h1>
+    <div class="detail-meta" id="singles-meta"></div>
+  </div>
+  <div class="singles-grid" id="singles-grid"></div>
+</div>
+
+<!-- ══ ASTRO DETAIL ══ -->
+<div class="page" id="page-astro">
+  <div class="detail-header">
+    <div class="back" onclick="goPage('works')">Works</div>
+    <h1>Astro</h1>
+    <div class="detail-meta" id="astro-meta"></div>
+  </div>
+  <div class="astro-grid" id="astro-grid"></div>
+</div>
+
+<!-- ══ ABOUT ══ -->
+<div class="page" id="page-about">
+  <div class="about-wrap">
+    <h1 id="about-name">Ryan</h1>
+    <p>I am a 20-year-old student studying at National Tsing Hua University and a passionate street photographer. My dream is to one day become the Sony Photographer of the Year.</p>
+    <p>The camera is another way for me to gaze at the world. I love every afternoon filled with light and shadow, and I have also come to enjoy the city streets graced by a gentle drizzle. Whenever I pick up my camera, I am the most confident person in the world!</p>
+    <p>My advice is simple: use this device more. Rather than staring at a screen to know everything happening in the world, using a camera to capture the people right in front of you might just be the correct way to use this machine. — MediaStorm</p>
+    <div class="about-gear">
+      <h3>Gear</h3>
+      <p>Sony α7R III · 42.4MP Full Frame<br>Tamron 28–200mm f/2.8–5.6 Di III RXD</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETUP OVERLAY ══ -->
+<div id="setup-overlay">
+  <div class="setup-close" onclick="closeSetup()" style="position:fixed;">[ ESC ]</div>
+  <div class="setup-box">
+    <h2>// Folder Setup</h2>
+    <p class="setup-desc">Create folders in Google Drive, set to "Anyone with the link can view", and paste links below.</p>
+
+    <div class="setup-section">
+      <div class="setup-section-title">Basic Info</div>
+      <div class="inp-row">
+        <label>Your Name</label>
+        <input class="inp" id="s-name" placeholder="Ryan">
+      </div>
+    </div>
+
+    <!-- City 1 -->
+    <div class="setup-section">
+      <div class="setup-section-title">City 1 (左欄)</div>
+      <div class="inp-row"><label>City Name</label><input class="inp" id="s-city1-name" placeholder="Taipei"></div>
+      <div class="inp-row"><label>Series Sub-folders</label></div>
+      <div id="city1-series-inputs"></div>
+      <span class="add-series-btn" onclick="addCitySeriesRow(1)">+ Add Series</span>
+    </div>
+
+    <!-- City 2 -->
+    <div class="setup-section">
+      <div class="setup-section-title">City 2 (中欄)</div>
+      <div class="inp-row"><label>City Name</label><input class="inp" id="s-city2-name" placeholder="Tokyo"></div>
+      <div class="inp-row"><label>Series Sub-folders</label></div>
+      <div id="city2-series-inputs"></div>
+      <span class="add-series-btn" onclick="addCitySeriesRow(2)">+ Add Series</span>
+    </div>
+
+    <!-- City 3 -->
+    <div class="setup-section">
+      <div class="setup-section-title">City 3 (右欄)</div>
+      <div class="inp-row"><label>City Name</label><input class="inp" id="s-city3-name" placeholder="Kyoto"></div>
+      <div class="inp-row"><label>Series Sub-folders</label></div>
+      <div id="city3-series-inputs"></div>
+      <span class="add-series-btn" onclick="addCitySeriesRow(3)">+ Add Series</span>
+    </div>
+
+    <div class="setup-section">
+      <div class="setup-section-title">Street · Singles</div>
+      <div class="inp-row">
+        <label>Singles Folder Link</label>
+        <input class="inp" id="s-singles" placeholder="https://drive.google.com/drive/folders/...">
+      </div>
+    </div>
+
+    <div class="setup-section">
+      <div class="setup-section-title">Astro</div>
+      <div class="inp-row">
+        <label>Astro Folder Link</label>
+        <input class="inp" id="s-astro" placeholder="https://drive.google.com/drive/folders/...">
+      </div>
+    </div>
+
+    <!-- 修改為產生程式碼的按鈕 -->
+    <button class="btn-save" onclick="generateConfig()">Generate Config Code →</button>
+
+    <!-- 新增的輸出區塊 -->
+    <div id="outputSection" style="display:none; margin-top: 32px;">
+      <div class="setup-section-title" style="border:none; margin-bottom:8px; color:var(--accent);">Generated Code (產生結果)</div>
+      <p class="setup-desc" style="margin-bottom:12px;">請點擊下方複製按鈕，並貼回您程式碼最上方 <code>let CONFIG = { ... }</code> 的區塊，覆蓋掉原本的設定即可完成更新！</p>
+      <textarea id="configOutput" rows="12" class="inp" style="resize:vertical; height:auto; margin-bottom:12px; font-family:var(--mono);" readonly></textarea>
+      <button class="btn-save" style="background:transparent; border:1px solid var(--accent); color:var(--accent); margin-top:0;" onclick="copyConfig()">📋 Copy Code</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLB()">
+  <div class="lb-close">[ ESC ]</div>
+  <img id="lb-img" src="" alt="">
+  <div class="lb-meta" id="lb-meta"></div>
+</div>
+
+<script>
+// ⬇️ 您未來的資料設定請直接覆蓋在這個 CONFIG 變數中 ⬇️
+let CONFIG = {
+  "name": "Ryan",
+  "cities": [
+    {
+      "name": "Taipei",
+      "series": []
+    },
+    {
+      "name": "Tokyo",
+      "series": []
+    },
+    {
+      "name": "Kyoto",
+      "series": []
+    }
+  ],
+  "singles": "",
+  "astro": ""
+};
+// ⬆️ 覆蓋到此結束 ⬆️
+
+// ══ STATE ══════════════════════════════════════════════════════
+let CACHE = {}; 
+
+// ══ FILMSTRIP BACKGROUND BUILDER ══
+const defaultPlaceholders = [
+  'https://images.unsplash.com/photo-1449844908441-8829872d2607?w=400&q=80',
+  'https://images.unsplash.com/photo-1511884641473-2b270da6b83f?w=400&q=80',
+  'https://images.unsplash.com/photo-1501183638710-841b5810b0ce?w=400&q=80',
+  'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80',
+  'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?w=400&q=80',
+  'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&q=80',
+  'https://images.unsplash.com/photo-1513622470522-26c311a071f9?w=400&q=80',
+  'https://images.unsplash.com/photo-1502899576159-f224dc2349fa?w=400&q=80',
+  'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&q=80',
+  'https://images.unsplash.com/photo-1470071131384-001b85755b36?w=400&q=80'
+];
+
+function buildFilmstrip(imagesArray) {
+  const container = document.getElementById('film-container');
+  container.innerHTML = ''; 
+  const colConfigs = [ { class: 'col-up fast' }, { class: 'col-down' }, { class: 'col-up' }, { class: 'col-down slow' }, { class: 'col-up fast' } ];
+  let shuffled = [...imagesArray].sort(() => 0.5 - Math.random());
+  if (shuffled.length === 0) shuffled = defaultPlaceholders;
+
+  let imgIdx = 0;
+  colConfigs.forEach(cfg => {
+    let colImagesHtml = '';
+    for(let i=0; i<4; i++){
+      const src = shuffled[imgIdx % shuffled.length];
+      colImagesHtml += `<div class="film-item"><img src="${src}" alt="" loading="lazy"></div>`;
+      imgIdx++;
+    }
+    let fullTrackHtml = colImagesHtml + colImagesHtml;
+    const colDiv = document.createElement('div');
+    colDiv.className = `film-col ${cfg.class}`;
+    colDiv.innerHTML = `<div class="film-track">${fullTrackHtml}</div>`;
+    container.appendChild(colDiv);
+  });
+}
+
+async function updateHeroBackground() {
+  let allPhotos = [];
+  if(CONFIG.cities && CONFIG.cities.length > 0) {
+    for(let c of CONFIG.cities) {
+      for(let s of c.series) {
+        let id = extractId(s.url);
+        if(id) { let p = await fetchFolder(id); if(p) allPhotos.push(...p); }
+      }
+    }
+  }
+  let sId = extractId(CONFIG.singles);
+  if(sId) { let p = await fetchFolder(sId); if(p) allPhotos.push(...p); }
+  let aId = extractId(CONFIG.astro);
+  if(aId) { let p = await fetchFolder(aId); if(p) allPhotos.push(...p); }
+  if(allPhotos.length > 0) { buildFilmstrip(allPhotos.map(p => p.thumb)); }
+}
+
+// ══ ROUTER ═════════════════════════════════════════════════════
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo(0,0);
+  ['works','about'].forEach(n=>{
+    const el = document.getElementById('nav-'+n);
+    if(el) el.classList.toggle('active', n===id);
+  });
+  if(id==='works') renderWorks();
+}
+
+// ══ DRIVE FETCH ════════════════════════════════════════════════
+const API_KEY = 'AIzaSyD4OJYYk9M5ybxYLCJZUJdgnYchEvXPl8o';
+function extractId(url) { const m = url?.match(/\/folders\/([a-zA-Z0-9_-]+)/); return m ? m[1] : null; }
+function thumb(id, w=800) { return `https://lh3.googleusercontent.com/d/${id}=w${w}`; }
+
+async function fetchFolder(folderId) {
+  if(!folderId) return [];
+  if(CACHE[folderId]) return CACHE[folderId];
+  try {
+    let photos = [], pageToken = '';
+    do {
+      const params = new URLSearchParams({
+        key: API_KEY, q: `'${folderId}' in parents and mimeType contains 'image/' and trashed = false`,
+        fields: 'nextPageToken, files(id, name)', orderBy: 'name', pageSize: 100, ...(pageToken ? {pageToken} : {})
+      });
+      const resp = await fetch(`https://www.googleapis.com/drive/v3/files?${params}`);
+      if(!resp.ok) throw new Error('API error');
+      const data = await resp.json();
+      const batch = (data.files || []).map(f => ({
+        id: f.id, name: f.name, thumb: thumb(f.id, 720), full: thumb(f.id, 1800), exif: 'Sony A7RIII · Tamron 28–200'
+      }));
+      photos = photos.concat(batch);
+      pageToken = data.nextPageToken || '';
+    } while(pageToken);
+    CACHE[folderId] = photos; return photos;
+  } catch(e) { return null; }
+}
+
+async function getCityCover(city) {
+  if (!city || !city.series || city.series.length === 0) return null;
+  const promises = city.series.map(s => fetchFolder(extractId(s.url)));
+  const results = await Promise.all(promises);
+  const allPhotos = results.flat().filter(p => p !== null && p !== undefined);
+  if (allPhotos.length === 0) return null;
+  return allPhotos[Math.floor(Math.random() * allPhotos.length)].thumb;
+}
+
+// ══ WORKS PAGE (BLOCK-BASED RENDERER) ══════════════════════════
+async function renderWorks() {
+  const list = document.getElementById('works-list');
+  
+  list.innerHTML = `
+    <div class="works-cities">
+      <div class="series-card skel"></div><div class="series-card skel"></div><div class="series-card skel"></div>
+    </div>
+    <div class="works-singles"><div class="singles-card-wrap skel" style="aspect-ratio:24/7"></div></div>
+    <div class="works-astro"><div class="astro-row skel" style="aspect-ratio:24/7"></div></div>
+  `;
+
+  const promises = [
+    getCityCover(CONFIG.cities[0]),
+    getCityCover(CONFIG.cities[1]),
+    getCityCover(CONFIG.cities[2]),
+    fetchFolder(extractId(CONFIG.singles)),
+    fetchFolder(extractId(CONFIG.astro))
+  ];
+  
+  const results = await Promise.all(promises);
+  const cityCovers = results.slice(0, 3);
+  const sp = results[3];
+  const ap = results[4];
+
+  list.innerHTML = '';
+
+  // ── Block 1: Cities ──
+  const citiesRow = document.createElement('div');
+  citiesRow.className = 'works-cities';
+  for(let i=0; i<3; i++) {
+    const city = CONFIG.cities[i];
+    const coverUrl = cityCovers[i];
+    const sc = document.createElement('div');
+    sc.className = 'series-card';
+    if(city && city.series.length > 0 && coverUrl) {
+      sc.innerHTML = `
+        <img class="card-cover" src="${coverUrl}" alt="">
+        <div class="card-label"><h2>${city.name}</h2><small>${city.series.length} Collections</small></div>`;
+      sc.onclick = () => openCity(i);
+    } else {
+      sc.innerHTML = `
+        <div class="skel" style="width:100%;height:100%;position:absolute;inset:0;"></div>
+        <div class="card-label" style="z-index:10;"><h2>${city?.name || `City ${i+1}`}</h2><small>${city?.series.length === 0 ? 'Setup Required' : 'Empty Folder'}</small></div>`;
+      sc.onclick = () => openSetup();
+    }
+    citiesRow.appendChild(sc);
+  }
+  list.appendChild(citiesRow);
+
+  // ── Block 2: Singles ──
+  const singlesRow = document.createElement('div');
+  singlesRow.className = 'works-singles';
+  const sw = document.createElement('div');
+  sw.className = 'singles-card-wrap';
+  const mosaic = document.createElement('div');
+  mosaic.className = 'singles-card';
+  
+  let currentShown = [];
+  const previews = sp && sp.length ? sp.slice(0,4) : [];
+  for(let i=0; i<4; i++){
+    const div = document.createElement('div');
+    div.className = 'singles-thumb';
+    div.id = `singles-thumb-${i}`;
+    if(previews[i]) {
+      div.innerHTML = `<img src="${previews[i].thumb}" alt="" loading="lazy">`;
+      currentShown.push(previews[i].thumb);
+    } else {
+      div.classList.add('skel');
+      currentShown.push(null);
+    }
+    mosaic.appendChild(div);
+  }
+  sw.appendChild(mosaic);
+  sw.insertAdjacentHTML('beforeend', `<div class="singles-label"><h2>Singles</h2><small>${sp?sp.length:0} Photos</small></div>`);
+  if(sp && sp.length) sw.onclick = () => openSingles();
+  else sw.onclick = () => openSetup();
+  singlesRow.appendChild(sw);
+  list.appendChild(singlesRow);
+
+  if (window.singlesInterval) clearInterval(window.singlesInterval);
+  if (sp && sp.length > 4) {
+    window.singlesInterval = setInterval(() => {
+      if (!document.getElementById('page-works').classList.contains('active')) return;
+      const targetIdx = Math.floor(Math.random() * 4);
+      const thumbDiv = document.getElementById(`singles-thumb-${targetIdx}`);
+      if(thumbDiv) {
+        let availablePhotos = sp.filter(p => !currentShown.includes(p.thumb));
+        if (availablePhotos.length === 0) return;
+        let randomPhoto = availablePhotos[Math.floor(Math.random() * availablePhotos.length)];
+        
+        currentShown[targetIdx] = randomPhoto.thumb;
+        const newImg = document.createElement('img');
+        newImg.src = randomPhoto.thumb;
+        newImg.style.opacity = '0'; 
+        thumbDiv.appendChild(newImg);
+        
+        void newImg.offsetWidth; 
+        newImg.style.opacity = '1';
+        
+        setTimeout(() => {
+          const imgs = thumbDiv.querySelectorAll('img');
+          imgs.forEach(img => { if (img !== newImg) img.remove(); });
+        }, 1200);
+      }
+    }, 3500);
+  }
+
+  // ── Block 3: Astro ──
+  const astroRow = document.createElement('div');
+  astroRow.className = 'works-astro';
+  const ar = document.createElement('div');
+  ar.className = 'astro-row';
+  if(ap && ap.length) {
+    ar.innerHTML = `
+      <img src="${ap[0].thumb}" alt="">
+      <div class="astro-label"><h2>Astro</h2><small>${ap.length} Photos</small></div>`;
+    ar.onclick = () => openAstro();
+  } else {
+    ar.innerHTML = `
+      <div class="skel" style="width:100%;height:100%;position:absolute;inset:0;"></div>
+      <div class="astro-label" style="z-index:10;"><h2>Astro</h2><small>${CONFIG.astro ? 'Empty' : 'Setup Required'}</small></div>`;
+    ar.onclick = () => openSetup();
+  }
+  astroRow.appendChild(ar);
+  list.appendChild(astroRow);
+}
+
+// ══ CITY DETAIL ════════════════════════════════════════════════
+async function openCity(cityIndex) {
+  const city = CONFIG.cities[cityIndex];
+  goPage('detail');
+  document.getElementById('detail-title').textContent = city.name || `City ${cityIndex+1}`;
+  document.getElementById('detail-meta').textContent = `${city.series.length} collections`;
+
+  const tabs = document.getElementById('series-tabs');
+  const area = document.getElementById('strips-area');
+  tabs.innerHTML = '';
+  area.innerHTML = '<div class="empty-msg">Loading...</div>';
+
+  if (!city.series || city.series.length === 0) {
+    area.innerHTML = '<p class="empty-msg">此城市尚未設定 Series。</p>';
+    return;
+  }
+
+  city.series.forEach((s, i) => {
+    if(!s.url) return; 
+    const tab = document.createElement('div');
+    tab.className = 'series-tab' + (i === 0 ? ' active' : '');
+    tab.textContent = s.name;
+    tab.onclick = () => {
+      document.querySelectorAll('.series-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      loadSeriesStrip(s, area);
+    };
+    tabs.appendChild(tab);
+  });
+  loadSeriesStrip(city.series[0], area);
+}
+
+async function loadSeriesStrip(series, area) {
+  area.innerHTML = '<div class="empty-msg">Loading...</div>';
+  const id = extractId(series.url);
+  const photos = id ? await fetchFolder(id) : null;
+  area.innerHTML = '';
+  if(!photos || !photos.length) {
+    area.innerHTML = `<p class="empty-msg">${photos===null?'無法載入 — 請確認資料夾設定':'尚無照片'}</p>`;
+    return;
+  }
+  makeStripBlock(area, photos, 'landscape', 360, 240, false);
+  makeStripBlock(area, [...photos].reverse(), 'landscape', 360, 240, true);
+}
+
+// ══ SINGLES ════════════════════════════════════════════════════
+async function openSingles() {
+  goPage('singles');
+  const grid = document.getElementById('singles-grid');
+  grid.innerHTML = '<div class="sg-item skel"></div>'.repeat(8);
+  const id = extractId(CONFIG.singles);
+  const photos = id ? await fetchFolder(id) : null;
+  grid.innerHTML = '';
+  if(!photos || !photos.length) {
+    grid.innerHTML = `<p class="empty-msg">${photos===null?'Failed to load':'No photos yet'}</p>`;
+    document.getElementById('singles-meta').textContent = '';
+    return;
+  }
+  document.getElementById('singles-meta').textContent = `${photos.length} photos`;
+  photos.forEach(p=>{
+    const item = document.createElement('div');
+    item.className = 'sg-item';
+    item.innerHTML = `<img src="${p.thumb}" alt="" loading="lazy">`;
+    item.onclick = ()=>openLB(p.full, p.exif);
+    grid.appendChild(item);
+  });
+}
+
+// ══ ASTRO ══════════════════════════════════════════════════════
+async function openAstro() {
+  goPage('astro');
+  const grid = document.getElementById('astro-grid');
+  grid.innerHTML = '<div class="astro-item skel"></div>'.repeat(4);
+  const id = extractId(CONFIG.astro);
+  const photos = id ? await fetchFolder(id) : null;
+  grid.innerHTML = '';
+  if(!photos||!photos.length){
+    grid.innerHTML = `<p class="empty-msg">${photos===null?'Failed to load':'No photos yet'}</p>`;
+    document.getElementById('astro-meta').textContent = '';
+    return;
+  }
+  document.getElementById('astro-meta').textContent = `${photos.length} photos`;
+  photos.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'astro-item';
+    item.innerHTML = `<img src="${p.thumb}" alt="" loading="lazy">`;
+    item.onclick = () => openLB(p.full, p.exif);
+    grid.appendChild(item);
+  });
+}
+
+// ══ STRIP BUILDER ══════════════════════════════════════════════
+function makeStripBlock(container, photos, cls, w, h, reverse) {
+  const block = document.createElement('div');
+  block.className = 'strip-block';
+  const wrap = document.createElement('div');
+  wrap.className = 'strip-wrap' + (reverse?' rev':'');
+  const strip = document.createElement('div');
+  strip.className = 'strip';
+  const doubled = [...photos, ...photos];
+  doubled.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+    card.style.width = w+'px';
+    card.innerHTML = `
+      <img src="${p.thumb}" width="${w}" height="${h}" loading="lazy" alt="" style="width:${w}px;height:${h}px;">
+      <div class="exif">${p.exif}</div>`;
+    card.onclick = ()=>openLB(p.full, p.exif);
+    strip.appendChild(card);
+  });
+  wrap.appendChild(strip);
+  block.appendChild(wrap);
+  container.appendChild(block);
+}
+
+// ══ SETUP ══════════════════════════════════════════════════════
+function openSetup() {
+  document.getElementById('s-name').value = CONFIG.name;
+  for(let i=1; i<=3; i++) {
+    const city = CONFIG.cities[i-1];
+    document.getElementById(`s-city${i}-name`).value = city.name || '';
+    const container = document.getElementById(`city${i}-series-inputs`);
+    container.innerHTML = '';
+    if (city.series && city.series.length) {
+      city.series.forEach(s => addCitySeriesRow(i, s.name, s.url));
+    } else {
+      addCitySeriesRow(i);
+    }
+  }
+  document.getElementById('s-singles').value = CONFIG.singles;
+  document.getElementById('s-astro').value = CONFIG.astro;
+  
+  // 打開介面時隱藏產出區塊
+  document.getElementById('outputSection').style.display = 'none';
+  document.getElementById('setup-overlay').classList.add('open');
+}
+function closeSetup() { document.getElementById('setup-overlay').classList.remove('open'); }
+
+function addCitySeriesRow(cityIndex, name='', url='') {
+  const container = document.getElementById(`city${cityIndex}-series-inputs`);
+  const row = document.createElement('div');
+  row.className = 'series-row';
+  row.innerHTML = `
+    <input class="inp name-inp" placeholder="Series Name" value="${name}">
+    <input class="inp url-inp" placeholder="Drive URL..." value="${url}">
+    <span class="del-btn" onclick="this.parentElement.remove()">✕</span>`;
+  container.appendChild(row);
+}
+
+// 產生設定碼的功能
+function generateConfig() {
+  const newName = document.getElementById('s-name').value.trim() || 'Ryan';
+  const newSingles = document.getElementById('s-singles').value.trim();
+  const newAstro = document.getElementById('s-astro').value.trim();
+  
+  const newCities = [];
+  for(let i=1; i<=3; i++) {
+    let n = document.getElementById(`s-city${i}-name`).value.trim();
+    const rows = document.getElementById(`city${i}-series-inputs`).querySelectorAll('.series-row');
+    const seriesData = [];
+    rows.forEach(row => {
+      const sName = row.querySelector('.name-inp').value.trim();
+      const sUrl = row.querySelector('.url-inp').value.trim();
+      if (sName && sUrl) seriesData.push({name: sName, url: sUrl});
+    });
+    newCities.push({name: n || `City ${i}`, series: seriesData});
+  }
+
+  // 整理出新的設定物件
+  const generatedObj = {
+    name: newName,
+    cities: newCities,
+    singles: newSingles,
+    astro: newAstro
+  };
+
+  // 轉成漂亮排版的字串
+  const codeString = `let CONFIG = ${JSON.stringify(generatedObj, null, 2)};`;
+  
+  // 顯示在畫面上
+  const configOutput = document.getElementById('configOutput');
+  configOutput.value = codeString;
+  document.getElementById('outputSection').style.display = 'block';
+}
+
+// 複製程式碼的功能
+function copyConfig() {
+  const configOutput = document.getElementById('configOutput');
+  configOutput.select();
+  document.execCommand('copy');
+  alert('複製成功！現在您可以前往 GitHub 將這段程式碼貼上並覆蓋掉原本的 CONFIG 變數。');
+}
+
+// ══ LIGHTBOX ════════════════════════════════════════════════════
+function openLB(src, meta) {
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lb-meta').textContent = meta;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLB() { document.getElementById('lightbox').classList.remove('open'); }
+
+window.addEventListener('scroll',()=>{ document.getElementById('topnav').classList.toggle('scrolled', window.scrollY>20); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeLB(); closeSetup(); } });
+
+// ══ BOOT ════════════════════════════════════════════════════════
+// 移除原有的 loadConfig()，現在直接抓取最上方寫死的 CONFIG 變數
+document.getElementById('about-name').textContent = CONFIG.name;
+document.getElementById('home-name').textContent = CONFIG.name;
+document.querySelector('.nav-logo').textContent = CONFIG.name + ' · Photography';
+
+buildFilmstrip(defaultPlaceholders);
+updateHeroBackground();
+
+const hasAnyUrl = CONFIG.cities.some(c => c.series.length > 0) || CONFIG.singles || CONFIG.astro;
+if(!hasAnyUrl) setTimeout(openSetup, 400);
+</script>
+</body>
+</html>
