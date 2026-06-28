@@ -11,6 +11,7 @@
   --bg:#0d0d0d;--bg2:#141414;--fg:#EDEBE6;--fg-dim:#525050;--fg-mid:#8a8785;
   --accent:#3E5F8A;--border:rgba(255,255,255,.07);
   --sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  /* 更新 Serif 字體族：英文優先，遇到中日文自動切換高質感宋體 */
   --serif:'Playfair Display', 'Noto Serif JP', 'Noto Serif TC', serif;
 }
 html,body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-weight:300;min-height:100vh;}
@@ -122,7 +123,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 
 /* ══ WORKS LIST (BLOCK-BASED ROWS) ══ */
 .works-list { padding: 0 48px 120px; display: flex; flex-direction: column; gap: 80px; }
-.works-cities { display: grid; gap: 3px; } /* grid-template-columns is now set via JS dynamically */
+.works-cities { display: grid; gap: 3px; } 
 .series-card { position: relative; overflow: hidden; cursor: pointer; background: var(--bg2); aspect-ratio: 3/4; }
 .card-cover { width: 100%; height: 100%; object-fit: cover; filter: brightness(.65); transition: filter .5s, transform .6s; }
 .series-card:hover .card-cover { filter: brightness(.8); transform: scale(1.03); }
@@ -275,7 +276,6 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 </head>
 <body>
 
-<!-- TOP NAV -->
 <nav class="top" id="topnav">
   <div class="nav-logo" onclick="goPage('home')">Ryan · Photography</div>
   <div class="nav-links">
@@ -285,7 +285,6 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   </div>
 </nav>
 
-<!-- ══ HOME ══ -->
 <div class="page active" id="page-home">
   <div class="hero">
     <div class="hero-film-bg" id="hero-film-bg">
@@ -300,13 +299,11 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   </div>
 </div>
 
-<!-- ══ WORKS ══ -->
 <div class="page" id="page-works">
   <div class="works-header"><h1>Works</h1></div>
   <div class="works-list" id="works-list"></div>
 </div>
 
-<!-- ══ SERIES DETAIL ══ -->
 <div class="page" id="page-detail">
   <div class="detail-header">
     <div class="back" onclick="goPage('works')">Works</div>
@@ -317,7 +314,6 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   <div class="strips-area" id="strips-area"></div>
 </div>
 
-<!-- ══ SINGLES DETAIL ══ -->
 <div class="page" id="page-singles">
   <div class="detail-header">
     <div class="back" onclick="goPage('works')">Works</div>
@@ -327,7 +323,6 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   <div class="singles-grid" id="singles-grid"></div>
 </div>
 
-<!-- ══ ASTRO DETAIL ══ -->
 <div class="page" id="page-astro">
   <div class="detail-header">
     <div class="back" onclick="goPage('works')">Works</div>
@@ -337,7 +332,6 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   <div class="astro-grid" id="astro-grid"></div>
 </div>
 
-<!-- ══ ABOUT ══ -->
 <div class="page" id="page-about">
   <div class="about-wrap">
     <h1 id="about-name">Ryan</h1>
@@ -351,7 +345,6 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   </div>
 </div>
 
-<!-- ══ SETUP OVERLAY ══ -->
 <div id="setup-overlay">
   <div class="setup-close" onclick="closeSetup()" style="position:fixed;">[ ESC ]</div>
   <div class="setup-box">
@@ -366,7 +359,6 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
       </div>
     </div>
 
-    <!-- 動態城市區塊的容器 -->
     <div id="dynamic-cities-wrapper"></div>
     
     <div class="setup-section" style="border-top:1px solid var(--border); padding-top:20px; margin-top:-16px;">
@@ -389,10 +381,8 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
       </div>
     </div>
 
-    <!-- 產生程式碼的按鈕 -->
     <button class="btn-save" onclick="generateConfig()">Generate Config Code →</button>
 
-    <!-- 輸出的區塊 -->
     <div id="outputSection" style="display:none; margin-top: 32px;">
       <div class="setup-section-title" style="border:none; margin-bottom:8px; color:var(--accent);">Generated Code (產生結果)</div>
       <p class="setup-desc" style="margin-bottom:12px;">請點擊下方複製按鈕，並貼回您程式碼最上方 <code>let CONFIG = { ... }</code> 的區塊，覆蓋掉原本的設定即可完成更新！</p>
@@ -403,7 +393,6 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   </div>
 </div>
 
-<!-- LIGHTBOX -->
 <div id="lightbox" onclick="closeLB()">
   <div class="lb-close">[ ESC ]</div>
   <img id="lb-img" src="" alt="">
@@ -413,336 +402,6 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 <script>
 // ⬇️ 您未來的資料設定請直接覆蓋在這個 CONFIG 變數中 ⬇️
 let CONFIG = {
-  "name": "Ryan",
-  "cities": [
-    {
-      "name": "台灣",
-      "series": [
-        {
-          "name": "合歡山",
-          "url": "https://drive.google.com/drive/folders/1rEBKaoUBERf3IW-sEYt03TIFYe4T8v1O?usp=drive_link"
-        },
-        {
-          "name": "Passion",
-          "url": "https://drive.google.com/drive/folders/1d9wa4RwScys9zERN7gX-RE70VM85qXHD?usp=drive_link"
-        },
-        {
-          "name": "新竹",
-          "url": "https://drive.google.com/drive/folders/13EWElmS_v-BlTfS3y0wYe-r3dALO-t3X?usp=drive_link"
-        },
-        {
-          "name": "一中街",
-          "url": "https://drive.google.com/drive/folders/1mlcn8ERCMX6tZJINXXJ4AesSETjD3OjO?usp=drive_link"
-        },
-        {
-          "name": "Lights in Life",
-          "url": "https://drive.google.com/drive/folders/1Gc4KjJwNn5Fe4Sw6ePDE1zc3NsgDS0nC?usp=drive_link"
-        },
-        {
-          "name": "Shodow",
-          "url": "https://drive.google.com/drive/folders/1MTPz2o94Vqe2Su_tgtZ3cHai7PT53IL6?usp=drive_link"
-        },
-        {
-          "name": "Street in my eyes",
-          "url": "https://drive.google.com/drive/folders/1em1AyyRNs0LPfmguTeTYQatKuV1aDIza?usp=drive_link"
-        },
-        {
-          "name": "鏡中畫",
-          "url": "https://drive.google.com/drive/folders/1hIvr1H2M3fV4kw5i79gRz6WYGl7yeK1M?usp=drive_link"
-        },
-        {
-          "name": "大明國小",
-          "url": "https://drive.google.com/drive/folders/1lzKZLj8A4tInVkf9Cww-B-IOX0U5SerZ?usp=drive_link"
-        }
-      ]
-    },
-    {
-      "name": "東京",
-      "series": [
-        {
-          "name": "霧雨の東京",
-          "url": "https://drive.google.com/drive/folders/1dlIAGeoYtNvzAMSX3RpFQpuBFCZ2Zlmp?usp=drive_link"
-        }
-      ]
-    },
-    {
-      "name": "Sydney",
-      "series": [
-        {
-          "name": "Sydney",
-          "url": "https://drive.google.com/drive/folders/1SAX5XS9cse1GLGn8aeMUlvs3q63ukh10?usp=drive_link"
-        },
-        {
-          "name": "Sydney, shall we?",
-          "url": "https://drive.google.com/drive/folders/1hiVDNpo2Yh2w4dkD1AF09--PBTchvTlc?usp=drive_link"
-        },
-        {
-          "name": "Bondi",
-          "url": "https://drive.google.com/drive/folders/1B91HncdDtK45ByUzqmfJMToGmQnpQLtp?usp=drive_link"
-        },
-        {
-          "name": "Frame",
-          "url": "https://drive.google.com/drive/folders/1NLNn1s0vmyO_0-0Os6avGo7VBG5N_Qgj?usp=drive_link"
-        },
-        {
-          "name": "Grit and Grace",
-          "url": "https://drive.google.com/drive/folders/17tU-vKVYg55_0GNIO-MGhaGaC0IEK4e_?usp=drive_link"
-        },
-        {
-          "name": "Newtown",
-          "url": "https://drive.google.com/drive/folders/1DEe93ECScuwPiVzRr49joyld8km61_Gv?usp=drive_link"
-        },
-        {
-          "name": "Alive",
-          "url": "https://drive.google.com/drive/folders/1EpqYCf35Oh79bqI1vl1caqOQwgItx-se?usp=drive_link"
-        },
-        {
-          "name": "Sydney Horbour Bridge",
-          "url": "https://drive.google.com/drive/folders/1-yNPVHdX8EysJOBhgajWDBiR1ZiSa9Pj?usp=drive_link"
-        }
-      ]
-    },
-    {
-      "name": "名古屋",
-      "series": [
-        {
-          "name": "夏祭",
-          "url": "https://drive.google.com/drive/folders/1d4Wl6QMySx98X2xAt4mKFictGGmEG4Dn?usp=drive_link"
-        },
-        {
-          "name": "Airport",
-          "url": "https://drive.google.com/drive/folders/1tUI81t4AUP4LrDPC0LKJeDfl1ryCj5qo?usp=drive_link"
-        },
-        {
-          "name": "私の見た夏祭り",
-          "url": "https://drive.google.com/drive/folders/1z8aW5qIsziC-7u5z1i_DU5DHyldN2n4l?usp=drive_link"
-        }
-      ]
-    }
-  ],
-  "singles": "https://drive.google.com/drive/folders/1dx_HAKYHhpmEGllWBd26GDyA-dKrjCuv?usp=drive_link",
-  "astro": "https://drive.google.com/drive/folders/1nJLWZobspWJu_6muaRKO-zdSjw5EfspK?usp=drive_link"
-};let CONFIG = {
-  "name": "Ryan",
-  "cities": [
-    {
-      "name": "台灣",
-      "series": [
-        {
-          "name": "合歡山",
-          "url": "https://drive.google.com/drive/folders/1rEBKaoUBERf3IW-sEYt03TIFYe4T8v1O?usp=drive_link"
-        },
-        {
-          "name": "Passion",
-          "url": "https://drive.google.com/drive/folders/1d9wa4RwScys9zERN7gX-RE70VM85qXHD?usp=drive_link"
-        },
-        {
-          "name": "新竹",
-          "url": "https://drive.google.com/drive/folders/13EWElmS_v-BlTfS3y0wYe-r3dALO-t3X?usp=drive_link"
-        },
-        {
-          "name": "一中街",
-          "url": "https://drive.google.com/drive/folders/1mlcn8ERCMX6tZJINXXJ4AesSETjD3OjO?usp=drive_link"
-        },
-        {
-          "name": "Lights in Life",
-          "url": "https://drive.google.com/drive/folders/1Gc4KjJwNn5Fe4Sw6ePDE1zc3NsgDS0nC?usp=drive_link"
-        },
-        {
-          "name": "Shodow",
-          "url": "https://drive.google.com/drive/folders/1MTPz2o94Vqe2Su_tgtZ3cHai7PT53IL6?usp=drive_link"
-        },
-        {
-          "name": "Street in my eyes",
-          "url": "https://drive.google.com/drive/folders/1em1AyyRNs0LPfmguTeTYQatKuV1aDIza?usp=drive_link"
-        },
-        {
-          "name": "鏡中畫",
-          "url": "https://drive.google.com/drive/folders/1hIvr1H2M3fV4kw5i79gRz6WYGl7yeK1M?usp=drive_link"
-        },
-        {
-          "name": "大明國小",
-          "url": "https://drive.google.com/drive/folders/1lzKZLj8A4tInVkf9Cww-B-IOX0U5SerZ?usp=drive_link"
-        }
-      ]
-    },
-    {
-      "name": "東京",
-      "series": [
-        {
-          "name": "霧雨の東京",
-          "url": "https://drive.google.com/drive/folders/1dlIAGeoYtNvzAMSX3RpFQpuBFCZ2Zlmp?usp=drive_link"
-        }
-      ]
-    },
-    {
-      "name": "Sydney",
-      "series": [
-        {
-          "name": "Sydney",
-          "url": "https://drive.google.com/drive/folders/1SAX5XS9cse1GLGn8aeMUlvs3q63ukh10?usp=drive_link"
-        },
-        {
-          "name": "Sydney, shall we?",
-          "url": "https://drive.google.com/drive/folders/1hiVDNpo2Yh2w4dkD1AF09--PBTchvTlc?usp=drive_link"
-        },
-        {
-          "name": "Bondi",
-          "url": "https://drive.google.com/drive/folders/1B91HncdDtK45ByUzqmfJMToGmQnpQLtp?usp=drive_link"
-        },
-        {
-          "name": "Frame",
-          "url": "https://drive.google.com/drive/folders/1NLNn1s0vmyO_0-0Os6avGo7VBG5N_Qgj?usp=drive_link"
-        },
-        {
-          "name": "Grit and Grace",
-          "url": "https://drive.google.com/drive/folders/17tU-vKVYg55_0GNIO-MGhaGaC0IEK4e_?usp=drive_link"
-        },
-        {
-          "name": "Newtown",
-          "url": "https://drive.google.com/drive/folders/1DEe93ECScuwPiVzRr49joyld8km61_Gv?usp=drive_link"
-        },
-        {
-          "name": "Alive",
-          "url": "https://drive.google.com/drive/folders/1EpqYCf35Oh79bqI1vl1caqOQwgItx-se?usp=drive_link"
-        },
-        {
-          "name": "Sydney Horbour Bridge",
-          "url": "https://drive.google.com/drive/folders/1-yNPVHdX8EysJOBhgajWDBiR1ZiSa9Pj?usp=drive_link"
-        }
-      ]
-    },
-    {
-      "name": "名古屋",
-      "series": [
-        {
-          "name": "夏祭",
-          "url": "https://drive.google.com/drive/folders/1d4Wl6QMySx98X2xAt4mKFictGGmEG4Dn?usp=drive_link"
-        },
-        {
-          "name": "Airport",
-          "url": "https://drive.google.com/drive/folders/1tUI81t4AUP4LrDPC0LKJeDfl1ryCj5qo?usp=drive_link"
-        },
-        {
-          "name": "私の見た夏祭り",
-          "url": "https://drive.google.com/drive/folders/1z8aW5qIsziC-7u5z1i_DU5DHyldN2n4l?usp=drive_link"
-        }
-      ]
-    }
-  ],
-  "singles": "https://drive.google.com/drive/folders/1dx_HAKYHhpmEGllWBd26GDyA-dKrjCuv?usp=drive_link",
-  "astro": "https://drive.google.com/drive/folders/1nJLWZobspWJu_6muaRKO-zdSjw5EfspK?usp=drive_link"
-};let CONFIG = {
-  "name": "Ryan",
-  "cities": [
-    {
-      "name": "台灣",
-      "series": [
-        {
-          "name": "合歡山",
-          "url": "https://drive.google.com/drive/folders/1rEBKaoUBERf3IW-sEYt03TIFYe4T8v1O?usp=drive_link"
-        },
-        {
-          "name": "Passion",
-          "url": "https://drive.google.com/drive/folders/1d9wa4RwScys9zERN7gX-RE70VM85qXHD?usp=drive_link"
-        },
-        {
-          "name": "新竹",
-          "url": "https://drive.google.com/drive/folders/13EWElmS_v-BlTfS3y0wYe-r3dALO-t3X?usp=drive_link"
-        },
-        {
-          "name": "一中街",
-          "url": "https://drive.google.com/drive/folders/1mlcn8ERCMX6tZJINXXJ4AesSETjD3OjO?usp=drive_link"
-        },
-        {
-          "name": "Lights in Life",
-          "url": "https://drive.google.com/drive/folders/1Gc4KjJwNn5Fe4Sw6ePDE1zc3NsgDS0nC?usp=drive_link"
-        },
-        {
-          "name": "Shodow",
-          "url": "https://drive.google.com/drive/folders/1MTPz2o94Vqe2Su_tgtZ3cHai7PT53IL6?usp=drive_link"
-        },
-        {
-          "name": "Street in my eyes",
-          "url": "https://drive.google.com/drive/folders/1em1AyyRNs0LPfmguTeTYQatKuV1aDIza?usp=drive_link"
-        },
-        {
-          "name": "鏡中畫",
-          "url": "https://drive.google.com/drive/folders/1hIvr1H2M3fV4kw5i79gRz6WYGl7yeK1M?usp=drive_link"
-        },
-        {
-          "name": "大明國小",
-          "url": "https://drive.google.com/drive/folders/1lzKZLj8A4tInVkf9Cww-B-IOX0U5SerZ?usp=drive_link"
-        }
-      ]
-    },
-    {
-      "name": "東京",
-      "series": [
-        {
-          "name": "霧雨の東京",
-          "url": "https://drive.google.com/drive/folders/1dlIAGeoYtNvzAMSX3RpFQpuBFCZ2Zlmp?usp=drive_link"
-        }
-      ]
-    },
-    {
-      "name": "Sydney",
-      "series": [
-        {
-          "name": "Sydney",
-          "url": "https://drive.google.com/drive/folders/1SAX5XS9cse1GLGn8aeMUlvs3q63ukh10?usp=drive_link"
-        },
-        {
-          "name": "Sydney, shall we?",
-          "url": "https://drive.google.com/drive/folders/1hiVDNpo2Yh2w4dkD1AF09--PBTchvTlc?usp=drive_link"
-        },
-        {
-          "name": "Bondi",
-          "url": "https://drive.google.com/drive/folders/1B91HncdDtK45ByUzqmfJMToGmQnpQLtp?usp=drive_link"
-        },
-        {
-          "name": "Frame",
-          "url": "https://drive.google.com/drive/folders/1NLNn1s0vmyO_0-0Os6avGo7VBG5N_Qgj?usp=drive_link"
-        },
-        {
-          "name": "Grit and Grace",
-          "url": "https://drive.google.com/drive/folders/17tU-vKVYg55_0GNIO-MGhaGaC0IEK4e_?usp=drive_link"
-        },
-        {
-          "name": "Newtown",
-          "url": "https://drive.google.com/drive/folders/1DEe93ECScuwPiVzRr49joyld8km61_Gv?usp=drive_link"
-        },
-        {
-          "name": "Alive",
-          "url": "https://drive.google.com/drive/folders/1EpqYCf35Oh79bqI1vl1caqOQwgItx-se?usp=drive_link"
-        },
-        {
-          "name": "Sydney Horbour Bridge",
-          "url": "https://drive.google.com/drive/folders/1-yNPVHdX8EysJOBhgajWDBiR1ZiSa9Pj?usp=drive_link"
-        }
-      ]
-    },
-    {
-      "name": "名古屋",
-      "series": [
-        {
-          "name": "夏祭",
-          "url": "https://drive.google.com/drive/folders/1d4Wl6QMySx98X2xAt4mKFictGGmEG4Dn?usp=drive_link"
-        },
-        {
-          "name": "Airport",
-          "url": "https://drive.google.com/drive/folders/1tUI81t4AUP4LrDPC0LKJeDfl1ryCj5qo?usp=drive_link"
-        },
-        {
-          "name": "私の見た夏祭り",
-          "url": "https://drive.google.com/drive/folders/1z8aW5qIsziC-7u5z1i_DU5DHyldN2n4l?usp=drive_link"
-        }
-      ]
-    }
-  ],
-  "singles": "https://drive.google.com/drive/folders/1dx_HAKYHhpmEGllWBd26GDyA-dKrjCuv?usp=drive_link",
-  "astro": "https://drive.google.com/drive/folders/1nJLWZobspWJu_6muaRKO-zdSjw5EfspK?usp=drive_link"
-};let CONFIG = {
   "name": "Ryan",
   "cities": [
     {
@@ -923,23 +582,6 @@ function goPage(id) {
   });
   if(id==='works') renderWorks();
 }
-
-// ══ STORAGE ════════════════════════════════════════════════════
-function loadConfig() {
-  try {
-    const saved = localStorage.getItem('rp_config_v3');
-    if(saved) {
-      let parsed = JSON.parse(saved);
-      CONFIG.name = parsed.name || 'Ryan';
-      CONFIG.singles = parsed.singles || '';
-      CONFIG.astro = parsed.astro || '';
-      if (parsed.cities) {
-        CONFIG.cities = parsed.cities;
-      }
-    }
-  } catch(e){}
-}
-function saveConfig() { localStorage.setItem('rp_config_v3', JSON.stringify(CONFIG)); }
 
 // ══ DRIVE FETCH ════════════════════════════════════════════════
 const API_KEY = 'AIzaSyD4OJYYk9M5ybxYLCJZUJdgnYchEvXPl8o';
