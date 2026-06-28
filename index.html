@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ryan · Photography</title>
-<!-- 引入 Playfair Display (英文) 以及 Noto Serif JP/TC (中日文完美適配) -->
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Noto+Serif+JP:wght@300;400&family=Noto+Serif+TC:wght@300;400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -12,7 +11,6 @@
   --bg:#0d0d0d;--bg2:#141414;--fg:#EDEBE6;--fg-dim:#525050;--fg-mid:#8a8785;
   --accent:#3E5F8A;--border:rgba(255,255,255,.07);
   --sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
-  /* 更新 Serif 字體族：英文優先，遇到中日文自動切換高質感宋體 */
   --serif:'Playfair Display', 'Noto Serif JP', 'Noto Serif TC', serif;
 }
 html,body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-weight:300;min-height:100vh;}
@@ -124,7 +122,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 
 /* ══ WORKS LIST (BLOCK-BASED ROWS) ══ */
 .works-list { padding: 0 48px 120px; display: flex; flex-direction: column; gap: 80px; }
-.works-cities { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+.works-cities { display: grid; gap: 3px; } /* grid-template-columns is now set via JS dynamically */
 .series-card { position: relative; overflow: hidden; cursor: pointer; background: var(--bg2); aspect-ratio: 3/4; }
 .card-cover { width: 100%; height: 100%; object-fit: cover; filter: brightness(.65); transition: filter .5s, transform .6s; }
 .series-card:hover .card-cover { filter: brightness(.8); transform: scale(1.03); }
@@ -258,7 +256,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   .works-header,.detail-header,.about-wrap{padding-left:24px;padding-right:24px;}
   
   .works-list { padding: 0 24px 60px; gap: 48px; }
-  .works-cities { grid-template-columns: 1fr; gap: 3px; }
+  .works-cities { grid-template-columns: 1fr !important; gap: 3px; }
   .series-card { aspect-ratio: 4/3; }
   .singles-card-wrap { aspect-ratio: 1/1; }
   .singles-card { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
@@ -358,7 +356,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   <div class="setup-close" onclick="closeSetup()" style="position:fixed;">[ ESC ]</div>
   <div class="setup-box">
     <h2>// Folder Setup</h2>
-    <p class="setup-desc">Create folders in Google Drive, set to "Anyone with the link can view", and paste links below.</p>
+    <p class="setup-desc">Create folders in Google Drive, set to "Anyone with the link can view", and paste links below. The site now supports dynamic cities.</p>
 
     <div class="setup-section">
       <div class="setup-section-title">Basic Info</div>
@@ -368,31 +366,11 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
       </div>
     </div>
 
-    <!-- City 1 -->
-    <div class="setup-section">
-      <div class="setup-section-title">City 1 (左欄)</div>
-      <div class="inp-row"><label>City Name</label><input class="inp" id="s-city1-name" placeholder="Taipei"></div>
-      <div class="inp-row"><label>Series Sub-folders</label></div>
-      <div id="city1-series-inputs"></div>
-      <span class="add-series-btn" onclick="addCitySeriesRow(1)">+ Add Series</span>
-    </div>
-
-    <!-- City 2 -->
-    <div class="setup-section">
-      <div class="setup-section-title">City 2 (中欄)</div>
-      <div class="inp-row"><label>City Name</label><input class="inp" id="s-city2-name" placeholder="Tokyo"></div>
-      <div class="inp-row"><label>Series Sub-folders</label></div>
-      <div id="city2-series-inputs"></div>
-      <span class="add-series-btn" onclick="addCitySeriesRow(2)">+ Add Series</span>
-    </div>
-
-    <!-- City 3 -->
-    <div class="setup-section">
-      <div class="setup-section-title">City 3 (右欄)</div>
-      <div class="inp-row"><label>City Name</label><input class="inp" id="s-city3-name" placeholder="Kyoto"></div>
-      <div class="inp-row"><label>Series Sub-folders</label></div>
-      <div id="city3-series-inputs"></div>
-      <span class="add-series-btn" onclick="addCitySeriesRow(3)">+ Add Series</span>
+    <!-- 動態城市區塊的容器 -->
+    <div id="dynamic-cities-wrapper"></div>
+    
+    <div class="setup-section" style="border-top:1px solid var(--border); padding-top:20px; margin-top:-16px;">
+      <span class="add-series-btn" onclick="addCitySetupBlock()" style="font-size:11px;">+ 新增一個城市區塊</span>
     </div>
 
     <div class="setup-section">
@@ -411,10 +389,10 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
       </div>
     </div>
 
-    <!-- 修改為產生程式碼的按鈕 -->
+    <!-- 產生程式碼的按鈕 -->
     <button class="btn-save" onclick="generateConfig()">Generate Config Code →</button>
 
-    <!-- 新增的輸出區塊 -->
+    <!-- 輸出的區塊 -->
     <div id="outputSection" style="display:none; margin-top: 32px;">
       <div class="setup-section-title" style="border:none; margin-bottom:8px; color:var(--accent);">Generated Code (產生結果)</div>
       <p class="setup-desc" style="margin-bottom:12px;">請點擊下方複製按鈕，並貼回您程式碼最上方 <code>let CONFIG = { ... }</code> 的區塊，覆蓋掉原本的設定即可完成更新！</p>
@@ -523,6 +501,15 @@ let CONFIG = {
           "url": "https://drive.google.com/drive/folders/1-yNPVHdX8EysJOBhgajWDBiR1ZiSa9Pj?usp=drive_link"
         }
       ]
+    },
+    {
+      "name": "倫敦",
+      "series": [
+        {
+          "name": "Night in London",
+          "url": ""
+        }
+      ]
     }
   ],
   "singles": "https://drive.google.com/drive/folders/1dx_HAKYHhpmEGllWBd26GDyA-dKrjCuv?usp=drive_link",
@@ -599,6 +586,23 @@ function goPage(id) {
   if(id==='works') renderWorks();
 }
 
+// ══ STORAGE ════════════════════════════════════════════════════
+function loadConfig() {
+  try {
+    const saved = localStorage.getItem('rp_config_v3');
+    if(saved) {
+      let parsed = JSON.parse(saved);
+      CONFIG.name = parsed.name || 'Ryan';
+      CONFIG.singles = parsed.singles || '';
+      CONFIG.astro = parsed.astro || '';
+      if (parsed.cities) {
+        CONFIG.cities = parsed.cities;
+      }
+    }
+  } catch(e){}
+}
+function saveConfig() { localStorage.setItem('rp_config_v3', JSON.stringify(CONFIG)); }
+
 // ══ DRIVE FETCH ════════════════════════════════════════════════
 const API_KEY = 'AIzaSyD4OJYYk9M5ybxYLCJZUJdgnYchEvXPl8o';
 function extractId(url) { const m = url?.match(/\/folders\/([a-zA-Z0-9_-]+)/); return m ? m[1] : null; }
@@ -640,33 +644,35 @@ async function getCityCover(city) {
 async function renderWorks() {
   const list = document.getElementById('works-list');
   
+  const numCities = CONFIG.cities.length;
+  let citySkels = Array(numCities).fill('<div class="series-card skel"></div>').join('');
+  
   list.innerHTML = `
-    <div class="works-cities">
-      <div class="series-card skel"></div><div class="series-card skel"></div><div class="series-card skel"></div>
+    <div class="works-cities" style="grid-template-columns: repeat(${numCities}, 1fr);">
+      ${citySkels}
     </div>
     <div class="works-singles"><div class="singles-card-wrap skel" style="aspect-ratio:24/7"></div></div>
     <div class="works-astro"><div class="astro-row skel" style="aspect-ratio:24/7"></div></div>
   `;
 
   const promises = [
-    getCityCover(CONFIG.cities[0]),
-    getCityCover(CONFIG.cities[1]),
-    getCityCover(CONFIG.cities[2]),
+    ...CONFIG.cities.map(c => getCityCover(c)),
     fetchFolder(extractId(CONFIG.singles)),
     fetchFolder(extractId(CONFIG.astro))
   ];
   
   const results = await Promise.all(promises);
-  const cityCovers = results.slice(0, 3);
-  const sp = results[3];
-  const ap = results[4];
+  const cityCovers = results.slice(0, numCities);
+  const sp = results[numCities];
+  const ap = results[numCities + 1];
 
   list.innerHTML = '';
 
   // ── Block 1: Cities ──
   const citiesRow = document.createElement('div');
   citiesRow.className = 'works-cities';
-  for(let i=0; i<3; i++) {
+  citiesRow.style.gridTemplateColumns = `repeat(${numCities}, 1fr)`;
+  for(let i=0; i<numCities; i++) {
     const city = CONFIG.cities[i];
     const coverUrl = cityCovers[i];
     const sc = document.createElement('div');
@@ -882,28 +888,49 @@ function makeStripBlock(container, photos, cls, w, h, reverse) {
 // ══ SETUP ══════════════════════════════════════════════════════
 function openSetup() {
   document.getElementById('s-name').value = CONFIG.name;
-  for(let i=1; i<=3; i++) {
-    const city = CONFIG.cities[i-1];
-    document.getElementById(`s-city${i}-name`).value = city.name || '';
-    const container = document.getElementById(`city${i}-series-inputs`);
-    container.innerHTML = '';
-    if (city.series && city.series.length) {
-      city.series.forEach(s => addCitySeriesRow(i, s.name, s.url));
-    } else {
-      addCitySeriesRow(i);
-    }
+  
+  const wrapper = document.getElementById('dynamic-cities-wrapper');
+  wrapper.innerHTML = '';
+  if (CONFIG.cities && CONFIG.cities.length > 0) {
+    CONFIG.cities.forEach((c) => addCitySetupBlock(c.name, c.series));
+  } else {
+    addCitySetupBlock();
   }
+
   document.getElementById('s-singles').value = CONFIG.singles;
   document.getElementById('s-astro').value = CONFIG.astro;
   
-  // 打開介面時隱藏產出區塊
   document.getElementById('outputSection').style.display = 'none';
   document.getElementById('setup-overlay').classList.add('open');
 }
 function closeSetup() { document.getElementById('setup-overlay').classList.remove('open'); }
 
-function addCitySeriesRow(cityIndex, name='', url='') {
-  const container = document.getElementById(`city${cityIndex}-series-inputs`);
+function addCitySetupBlock(cityName = '', seriesData = []) {
+  const wrapper = document.getElementById('dynamic-cities-wrapper');
+  const cityIndex = wrapper.children.length;
+  const section = document.createElement('div');
+  section.className = 'setup-section city-setup-block';
+  section.innerHTML = `
+    <div class="setup-section-title" style="display:flex; justify-content:space-between; align-items:center;">
+      <span>City ${cityIndex + 1}</span>
+      <span class="del-btn" style="cursor:pointer; color:var(--fg-dim);" onclick="this.closest('.city-setup-block').remove()">✕ 移除城市</span>
+    </div>
+    <div class="inp-row"><label>City Name</label><input class="inp city-name-inp" placeholder="City Name" value="${cityName}"></div>
+    <div class="inp-row"><label>Series Sub-folders</label></div>
+    <div class="city-series-inputs"></div>
+    <span class="add-series-btn" onclick="addCitySeriesRow(this.previousElementSibling)">+ Add Series</span>
+  `;
+  wrapper.appendChild(section);
+  
+  const inputsContainer = section.querySelector('.city-series-inputs');
+  if (seriesData.length > 0) {
+    seriesData.forEach(s => addCitySeriesRow(inputsContainer, s.name, s.url));
+  } else {
+    addCitySeriesRow(inputsContainer);
+  }
+}
+
+function addCitySeriesRow(container, name='', url='') {
   const row = document.createElement('div');
   row.className = 'series-row';
   row.innerHTML = `
@@ -913,43 +940,33 @@ function addCitySeriesRow(cityIndex, name='', url='') {
   container.appendChild(row);
 }
 
-// 產生設定碼的功能
 function generateConfig() {
   const newName = document.getElementById('s-name').value.trim() || 'Ryan';
   const newSingles = document.getElementById('s-singles').value.trim();
   const newAstro = document.getElementById('s-astro').value.trim();
   
   const newCities = [];
-  for(let i=1; i<=3; i++) {
-    let n = document.getElementById(`s-city${i}-name`).value.trim();
-    const rows = document.getElementById(`city${i}-series-inputs`).querySelectorAll('.series-row');
+  const cityBlocks = document.querySelectorAll('.city-setup-block');
+  cityBlocks.forEach((block, idx) => {
+    let n = block.querySelector('.city-name-inp').value.trim();
+    const rows = block.querySelectorAll('.series-row');
     const seriesData = [];
     rows.forEach(row => {
       const sName = row.querySelector('.name-inp').value.trim();
       const sUrl = row.querySelector('.url-inp').value.trim();
       if (sName && sUrl) seriesData.push({name: sName, url: sUrl});
     });
-    newCities.push({name: n || `City ${i}`, series: seriesData});
-  }
+    newCities.push({name: n || `City ${idx+1}`, series: seriesData});
+  });
 
-  // 整理出新的設定物件
-  const generatedObj = {
-    name: newName,
-    cities: newCities,
-    singles: newSingles,
-    astro: newAstro
-  };
-
-  // 轉成漂亮排版的字串
+  const generatedObj = { name: newName, cities: newCities, singles: newSingles, astro: newAstro };
   const codeString = `let CONFIG = ${JSON.stringify(generatedObj, null, 2)};`;
   
-  // 顯示在畫面上
   const configOutput = document.getElementById('configOutput');
   configOutput.value = codeString;
   document.getElementById('outputSection').style.display = 'block';
 }
 
-// 複製程式碼的功能
 function copyConfig() {
   const configOutput = document.getElementById('configOutput');
   configOutput.select();
@@ -969,16 +986,12 @@ window.addEventListener('scroll',()=>{ document.getElementById('topnav').classLi
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeLB(); closeSetup(); } });
 
 // ══ BOOT ════════════════════════════════════════════════════════
-// 移除原有的 loadConfig()，現在直接抓取最上方寫死的 CONFIG 變數
 document.getElementById('about-name').textContent = CONFIG.name;
 document.getElementById('home-name').textContent = CONFIG.name;
 document.querySelector('.nav-logo').textContent = CONFIG.name + ' · Photography';
 
 buildFilmstrip(defaultPlaceholders);
 updateHeroBackground();
-
-const hasAnyUrl = CONFIG.cities.some(c => c.series.length > 0) || CONFIG.singles || CONFIG.astro;
-if(!hasAnyUrl) setTimeout(openSetup, 400);
 </script>
 </body>
 </html>
