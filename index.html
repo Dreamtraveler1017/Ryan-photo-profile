@@ -11,7 +11,6 @@
   --bg:#0d0d0d;--bg2:#141414;--fg:#EDEBE6;--fg-dim:#525050;--fg-mid:#8a8785;
   --accent:#3E5F8A;--border:rgba(255,255,255,.07);
   --sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
-  /* 更新 Serif 字體族：英文優先，遇到中日文自動切換高質感宋體 */
   --serif:'Playfair Display', 'Noto Serif JP', 'Noto Serif TC', serif;
 }
 html,body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-weight:300;min-height:100vh;}
@@ -38,40 +37,14 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 .nav-links a{font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--fg-dim);text-transform:uppercase;transition:color .3s;}
 .nav-links a:hover,.nav-links a.active{color:var(--fg);}
 
-/* ══ HERO & FILMSTRIP ANIMATION ══ */
-.hero {
-  position: relative;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg);
-}
-.hero-film-bg {
-  position: absolute;
-  inset: -10%;
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  z-index: 1;
-  transform: scale(1.05); 
-}
-.film-overlay {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.85) 100%);
-  z-index: 2;
-  pointer-events: none;
-}
+/* ══ HERO & FILMSTRIP ══ */
+.hero { position: relative; height: 100vh; width: 100vw; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+.hero-film-bg { position: absolute; inset: -10%; display: flex; gap: 8px; justify-content: center; z-index: 1; transform: scale(1.05); }
+.film-overlay { position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.85) 100%); z-index: 2; pointer-events: none; }
 .film-col { display: flex; flex-direction: column; width: 20%; min-width: 220px; }
 .film-track { display: flex; flex-direction: column; gap: 8px; will-change: transform; }
 .film-item { width: 100%; background: var(--bg2); }
-.film-item img {
-  display: block; width: 100%; height: auto; object-fit: cover;
-  filter: grayscale(0.5) contrast(1.1) brightness(0.8); transition: filter 0.5s;
-}
+.film-item img { display: block; width: 100%; height: auto; object-fit: cover; filter: grayscale(0.5) contrast(1.1) brightness(0.8); transition: filter 0.5s; }
 .col-up .film-track { animation: scrollUp 45s linear infinite; }
 .col-down .film-track { animation: scrollDown 55s linear infinite; }
 .fast { animation-duration: 35s !important; }
@@ -82,60 +55,39 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 @keyframes scrollDown { 0% { transform: translateY(-50%); } 100% { transform: translateY(0); } }
 
-.hero-content {
-  position: relative; z-index: 10; text-align: center;
-  display: flex; flex-direction: column; align-items: center; padding: 0 24px;
-}
-.hero-title-main {
-  font-family: var(--serif); font-size: clamp(60px, 10vw, 130px); font-weight: 400;
-  letter-spacing: -0.01em; color: #fff; margin-bottom: 20px; line-height: 1;
-  text-shadow: 0 10px 40px rgba(0,0,0,0.8);
-}
-.hero-subtitle {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em;
-  color: rgba(255,255,255,0.7); text-transform: uppercase; margin-bottom: 48px;
-}
-.hero-cta {
-  padding: 16px 48px; border: 1px solid rgba(255,255,255,0.3);
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
-  color: #fff; text-transform: uppercase; cursor: pointer; background: transparent;
-  transition: all .4s cubic-bezier(0.16,1,0.3,1); backdrop-filter: blur(4px);
-}
+.hero-content { position: relative; z-index: 10; text-align: center; display: flex; flex-direction: column; align-items: center; padding: 0 24px; }
+.hero-title-main { font-family: var(--serif); font-size: clamp(60px, 10vw, 130px); font-weight: 400; letter-spacing: -0.01em; color: #fff; margin-bottom: 20px; line-height: 1; text-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+.hero-subtitle { font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em; color: rgba(255,255,255,0.7); text-transform: uppercase; margin-bottom: 48px; }
+.hero-cta { padding: 16px 48px; border: 1px solid rgba(255,255,255,0.3); font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; color: #fff; text-transform: uppercase; cursor: pointer; background: transparent; transition: all .4s cubic-bezier(0.16,1,0.3,1); backdrop-filter: blur(4px); }
 .hero-cta:hover { background: #fff; color: #000; transform: translateY(-3px); border-color: #fff; }
 
 /* ══ WORKS & DETAIL HEADER ══ */
-.works-header, .detail-header {
-  padding: 180px 48px 60px;
-  display: flex; flex-direction: column; align-items: flex-start;
-}
-.detail-header .back {
-  font-family: var(--mono); font-size: 9px; color: var(--fg-dim); letter-spacing: .25em;
-  cursor: pointer; text-transform: uppercase; transition: color .3s; display: inline-flex; align-items: center; gap: 12px;
-}
+.works-header, .detail-header { padding: 180px 48px 60px; display: flex; flex-direction: column; align-items: flex-start; }
+.detail-header .back { font-family: var(--mono); font-size: 9px; color: var(--fg-dim); letter-spacing: .25em; cursor: pointer; text-transform: uppercase; transition: color .3s; display: inline-flex; align-items: center; gap: 12px; }
 .detail-header .back::before { content: ''; display: block; width: 16px; height: 1px; background: var(--fg-dim); transition: width .3s, background .3s; }
 .detail-header .back:hover { color: var(--fg); }
 .detail-header .back:hover::before { width: 24px; background: var(--fg); }
-.works-header h1, .detail-header h1 {
-  font-family: var(--serif); font-size: clamp(48px, 7vw, 96px); font-weight: 400;
-  letter-spacing: -0.01em; line-height: 1.1; margin: 24px 0 16px;
-}
+.works-header h1, .detail-header h1 { font-family: var(--serif); font-size: clamp(48px, 7vw, 96px); font-weight: 400; letter-spacing: -0.01em; line-height: 1.1; margin: 24px 0 16px; }
 .detail-meta { font-family: var(--mono); font-size: 10px; color: var(--fg-dim); letter-spacing: .15em; text-transform: uppercase; }
 
-/* ══ WORKS LIST (BLOCK-BASED ROWS) ══ */
+/* ══ WORKS LIST & MAP ICONS ══ */
 .works-list { padding: 0 48px 120px; display: flex; flex-direction: column; gap: 80px; }
 .works-cities { display: grid; gap: 3px; } 
 .series-card { position: relative; overflow: hidden; cursor: pointer; background: var(--bg2); aspect-ratio: 3/4; }
 .card-cover { width: 100%; height: 100%; object-fit: cover; filter: brightness(.65); transition: filter .5s, transform .6s; }
 .series-card:hover .card-cover { filter: brightness(.8); transform: scale(1.03); }
 
+/* SVG Map Icon Styles */
+.map-icon { width: 56px; height: 56px; color: rgba(255, 255, 255, 0.12); overflow: visible; }
+.map-dot { fill: #fff; }
+.map-pulse { fill: none; stroke: #fff; stroke-width: 0.8px; transform-box: fill-box; transform-origin: center; animation: mapPulse 2s infinite cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes mapPulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(3.5); opacity: 0; } }
+
 .works-singles { width: 100%; }
 .singles-card-wrap { position: relative; cursor: pointer; background: var(--bg2); aspect-ratio: 24/7; }
 .singles-card { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr; gap: 3px; height: 100%; }
 .singles-thumb { position: relative; overflow: hidden; background: var(--bg2); width: 100%; height: 100%; }
-.singles-thumb img {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  object-fit: cover; filter: brightness(.8); transition: opacity 1.2s ease-in-out, filter .4s;
-}
+.singles-thumb img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.8); transition: opacity 1.2s ease-in-out, filter .4s; }
 .singles-thumb:hover img { filter: brightness(1); }
 .singles-card-wrap:hover .singles-thumb img { filter: brightness(.95); }
 
@@ -145,8 +97,8 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 .astro-row:hover img { filter: brightness(.8) saturate(1); transform: scale(1.03); }
 
 /* Block Labels */
-.card-label, .singles-label, .astro-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; z-index: 10; }
-.card-label { background: linear-gradient(transparent,rgba(0,0,0,.7)); }
+.card-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; z-index: 10; display: flex; justify-content: space-between; align-items: flex-end; background: linear-gradient(transparent,rgba(0,0,0,.8)); }
+.singles-label, .astro-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; z-index: 10; }
 .singles-label { background: linear-gradient(transparent,rgba(0,0,0,.65)); pointer-events: none; }
 .astro-label { display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(transparent,rgba(0,0,0,.5)); pointer-events: none; }
 .card-label h2, .singles-label h2, .astro-label h2 { font-size: clamp(24px,3vw,40px); font-family: var(--serif); font-weight: 400; letter-spacing: -.01em; margin-bottom: 4px; }
@@ -167,27 +119,10 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 .astro-item.skel { aspect-ratio: 4/5; }
 
 /* ══ SERIES TABS & STRIPS ══ */
-.series-tabs {
-  display: flex;
-  gap: 16px;
-  padding: 0 48px;
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-}
-.series-tab {
-  font-family: var(--serif);
-  font-size: clamp(22px, 2.5vw, 36px); 
-  letter-spacing: 0.02em;
-  color: var(--fg-dim);
-  padding: 20px 24px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: color .3s, border-color .3s;
-  white-space: nowrap;
-}
+.series-tabs { display: flex; gap: 16px; padding: 0 48px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+.series-tab { font-family: var(--serif); font-size: clamp(22px, 2.5vw, 36px); letter-spacing: 0.02em; color: var(--fg-dim); padding: 20px 24px; cursor: pointer; border-bottom: 2px solid transparent; transition: color .3s, border-color .3s; white-space: nowrap; }
 .series-tab:hover { color: var(--fg); }
 .series-tab.active { color: var(--fg); border-bottom-color: var(--fg); } 
-
 .strips-area{padding:40px 0;}
 .strip-block{margin-bottom:32px;}
 .strip-block-label{font-family:var(--mono);font-size:11px;color:var(--fg-dim);letter-spacing:.2em;text-transform:uppercase;padding:0 48px;margin-bottom:20px;display:flex;align-items:center;gap:16px;}
@@ -276,6 +211,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 </head>
 <body>
 
+<!-- TOP NAV -->
 <nav class="top" id="topnav">
   <div class="nav-logo" onclick="goPage('home')">Ryan · Photography</div>
   <div class="nav-links">
@@ -285,6 +221,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   </div>
 </nav>
 
+<!-- ══ HOME ══ -->
 <div class="page active" id="page-home">
   <div class="hero">
     <div class="hero-film-bg" id="hero-film-bg">
@@ -299,11 +236,13 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   </div>
 </div>
 
+<!-- ══ WORKS ══ -->
 <div class="page" id="page-works">
   <div class="works-header"><h1>Works</h1></div>
   <div class="works-list" id="works-list"></div>
 </div>
 
+<!-- ══ SERIES DETAIL ══ -->
 <div class="page" id="page-detail">
   <div class="detail-header">
     <div class="back" onclick="goPage('works')">Works</div>
@@ -314,6 +253,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   <div class="strips-area" id="strips-area"></div>
 </div>
 
+<!-- ══ SINGLES DETAIL ══ -->
 <div class="page" id="page-singles">
   <div class="detail-header">
     <div class="back" onclick="goPage('works')">Works</div>
@@ -323,6 +263,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   <div class="singles-grid" id="singles-grid"></div>
 </div>
 
+<!-- ══ ASTRO DETAIL ══ -->
 <div class="page" id="page-astro">
   <div class="detail-header">
     <div class="back" onclick="goPage('works')">Works</div>
@@ -332,6 +273,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   <div class="astro-grid" id="astro-grid"></div>
 </div>
 
+<!-- ══ ABOUT ══ -->
 <div class="page" id="page-about">
   <div class="about-wrap">
     <h1 id="about-name">Ryan</h1>
@@ -345,6 +287,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   </div>
 </div>
 
+<!-- ══ SETUP OVERLAY ══ -->
 <div id="setup-overlay">
   <div class="setup-close" onclick="closeSetup()" style="position:fixed;">[ ESC ]</div>
   <div class="setup-box">
@@ -359,6 +302,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
       </div>
     </div>
 
+    <!-- 動態城市區塊的容器 -->
     <div id="dynamic-cities-wrapper"></div>
     
     <div class="setup-section" style="border-top:1px solid var(--border); padding-top:20px; margin-top:-16px;">
@@ -381,8 +325,10 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
       </div>
     </div>
 
+    <!-- 產生程式碼的按鈕 -->
     <button class="btn-save" onclick="generateConfig()">Generate Config Code →</button>
 
+    <!-- 輸出的區塊 -->
     <div id="outputSection" style="display:none; margin-top: 32px;">
       <div class="setup-section-title" style="border:none; margin-bottom:8px; color:var(--accent);">Generated Code (產生結果)</div>
       <p class="setup-desc" style="margin-bottom:12px;">請點擊下方複製按鈕，並貼回您程式碼最上方 <code>let CONFIG = { ... }</code> 的區塊，覆蓋掉原本的設定即可完成更新！</p>
@@ -393,6 +339,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   </div>
 </div>
 
+<!-- LIGHTBOX -->
 <div id="lightbox" onclick="closeLB()">
   <div class="lb-close">[ ESC ]</div>
   <img id="lb-img" src="" alt="">
@@ -517,6 +464,36 @@ let CONFIG = {
 // ══ STATE ══════════════════════════════════════════════════════
 let CACHE = {}; 
 
+// ══ MAP SVG GENERATOR ═════════════════════════════════════════
+function getCityMapSVG(cityName) {
+  const taiwanSVG = `<svg viewBox="0 0 100 100" class="map-icon"><path d="M55,10 C62,15 70,40 55,70 C48,90 40,95 38,90 C32,80 35,50 42,25 C45,15 50,5 55,10 Z" fill="currentColor"/></svg>`;
+  
+  const japanSVG = (cx, cy) => `<svg viewBox="0 0 100 100" class="map-icon"><path d="M85,15 C92,20 85,35 75,42 C60,52 45,65 30,70 C15,75 5,90 8,82 C10,75 25,65 40,60 C55,50 68,40 75,30 C80,20 80,10 85,15 Z" fill="currentColor"/>
+    <circle cx="${cx}" cy="${cy}" r="2" class="map-dot" />
+    <circle cx="${cx}" cy="${cy}" r="2" class="map-pulse" />
+  </svg>`;
+  
+  const ausSVG = (cx, cy) => `<svg viewBox="0 0 100 100" class="map-icon"><path d="M25,25 C40,10 65,10 75,18 C85,25 95,40 90,55 C85,70 75,80 50,75 C30,70 10,80 5,60 C0,40 10,35 25,25 Z M75,85 C80,82 85,88 80,95 C75,100 70,92 75,85 Z" fill="currentColor"/>
+    <circle cx="${cx}" cy="${cy}" r="2" class="map-dot" />
+    <circle cx="${cx}" cy="${cy}" r="2" class="map-pulse" />
+  </svg>`;
+  
+  const ukSVG = (cx, cy) => `<svg viewBox="0 0 100 100" class="map-icon"><path d="M45,15 C55,5 65,25 55,45 C50,60 65,75 55,90 C45,100 35,90 35,70 C40,50 30,30 45,15 Z" fill="currentColor"/>
+    <circle cx="${cx}" cy="${cy}" r="2" class="map-dot" />
+    <circle cx="${cx}" cy="${cy}" r="2" class="map-pulse" />
+  </svg>`;
+
+  let n = cityName.toLowerCase();
+  if (n.includes('台灣') || n.includes('taiwan') || n.includes('taipei') || n.includes('台北')) return taiwanSVG;
+  if (n.includes('東京') || n.includes('tokyo')) return japanSVG(68, 45); 
+  if (n.includes('名古屋') || n.includes('nagoya')) return japanSVG(58, 55);
+  if (n.includes('京都') || n.includes('kyoto') || n.includes('osaka') || n.includes('大阪')) return japanSVG(52, 60);
+  if (n.includes('sydney') || n.includes('雪梨') || n.includes('澳洲') || n.includes('australia')) return ausSVG(84, 62);
+  if (n.includes('london') || n.includes('倫敦') || n.includes('uk')) return ukSVG(48, 75);
+
+  return '';
+}
+
 // ══ FILMSTRIP BACKGROUND BUILDER ══
 const defaultPlaceholders = [
   'https://images.unsplash.com/photo-1449844908441-8829872d2607?w=400&q=80',
@@ -582,6 +559,23 @@ function goPage(id) {
   });
   if(id==='works') renderWorks();
 }
+
+// ══ STORAGE ════════════════════════════════════════════════════
+function loadConfig() {
+  try {
+    const saved = localStorage.getItem('rp_config_v3');
+    if(saved) {
+      let parsed = JSON.parse(saved);
+      CONFIG.name = parsed.name || 'Ryan';
+      CONFIG.singles = parsed.singles || '';
+      CONFIG.astro = parsed.astro || '';
+      if (parsed.cities) {
+        CONFIG.cities = parsed.cities;
+      }
+    }
+  } catch(e){}
+}
+function saveConfig() { localStorage.setItem('rp_config_v3', JSON.stringify(CONFIG)); }
 
 // ══ DRIVE FETCH ════════════════════════════════════════════════
 const API_KEY = 'AIzaSyD4OJYYk9M5ybxYLCJZUJdgnYchEvXPl8o';
@@ -660,12 +654,24 @@ async function renderWorks() {
     if(city && city.series.length > 0 && coverUrl) {
       sc.innerHTML = `
         <img class="card-cover" src="${coverUrl}" alt="">
-        <div class="card-label"><h2>${city.name}</h2><small>${city.series.length} Collections</small></div>`;
+        <div class="card-label">
+          <div>
+            <h2>${city.name}</h2>
+            <small>${city.series.length} Collections</small>
+          </div>
+          <div>${getCityMapSVG(city.name)}</div>
+        </div>`;
       sc.onclick = () => openCity(i);
     } else {
       sc.innerHTML = `
         <div class="skel" style="width:100%;height:100%;position:absolute;inset:0;"></div>
-        <div class="card-label" style="z-index:10;"><h2>${city?.name || `City ${i+1}`}</h2><small>${city?.series.length === 0 ? 'Setup Required' : 'Empty Folder'}</small></div>`;
+        <div class="card-label" style="z-index:10; align-items: flex-end;">
+          <div>
+            <h2>${city?.name || `City ${i+1}`}</h2>
+            <small>${city?.series.length === 0 ? 'Setup Required' : 'Empty Folder'}</small>
+          </div>
+          <div>${getCityMapSVG(city?.name || '')}</div>
+        </div>`;
       sc.onclick = () => openSetup();
     }
     citiesRow.appendChild(sc);
