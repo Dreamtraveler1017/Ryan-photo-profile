@@ -85,11 +85,23 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 .singles-thumb:hover img { filter: brightness(1); }
 .singles-card-wrap:hover .singles-thumb img { filter: brightness(.95); }
 
-/* 共用 Row 樣式 (Astro & PostCards) */
+/* 共用 Row 樣式 (Astro) */
 .works-row-block { width: 100%; }
 .banner-row { position: relative; overflow: hidden; background: var(--bg2); cursor: pointer; aspect-ratio: 24/7; }
 .banner-row img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.6) saturate(.7); transition: filter .5s, transform .6s; }
 .banner-row:hover img { filter: brightness(.8) saturate(1); transform: scale(1.03); }
+
+/* ══ POST CARDS MARQUEE BANNER ══ */
+.marquee-banner { position: relative; overflow: hidden; background: var(--bg2); cursor: pointer; aspect-ratio: 24/7; }
+.marquee-track { display: flex; height: 100%; width: 200%; /* 包含 8 張圖，佔兩倍寬 */ animation: marqueeRight 35s linear infinite; }
+@keyframes marqueeRight {
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+.marquee-img-wrap { flex: 1; height: 100%; padding-right: 3px; box-sizing: border-box; }
+.marquee-img-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; filter: brightness(.6) saturate(.7); transition: filter .5s, transform .6s; }
+.marquee-banner:hover .marquee-img-wrap img { filter: brightness(.8) saturate(1); }
+.marquee-banner:hover .marquee-track { animation-play-state: paused; }
 
 /* Block Labels & Coordinate Styling */
 .card-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; z-index: 10; display: flex; justify-content: space-between; align-items: flex-end; background: linear-gradient(transparent,rgba(0,0,0,.8)); }
@@ -197,7 +209,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   .works-list { padding: 0 24px 60px; gap: 48px; }
   .works-cities { grid-template-columns: 1fr !important; gap: 3px; }
   .series-card { aspect-ratio: 4/3; }
-  .singles-card-wrap { aspect-ratio: 1/1; }
+  .singles-card-wrap, .marquee-banner { aspect-ratio: 1/1; }
   .singles-card { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
   .banner-row { aspect-ratio: 4/3; }
   .series-tabs,.singles-grid, .postcards-grid, .astro-grid {padding-left:24px;padding-right:24px;}
@@ -208,7 +220,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   .pc-item, .astro-item { margin-bottom: 24px; }
 }
 @media(max-width:480px){ .singles-grid { column-count: 1; } }
-@media(prefers-reduced-motion:reduce){ .film-track, .strip { animation: none !important; transform: none !important; } }
+@media(prefers-reduced-motion:reduce){ .film-track, .strip, .marquee-track { animation: none !important; transform: none !important; } }
 </style>
 </head>
 <body>
@@ -596,7 +608,7 @@ async function renderWorks() {
       ${citySkels}
     </div>
     <div class="works-row-block"><div class="singles-card-wrap skel" style="aspect-ratio:24/7"></div></div>
-    <div class="works-row-block"><div class="banner-row skel" style="aspect-ratio:24/7"></div></div>
+    <div class="works-row-block"><div class="marquee-banner skel" style="aspect-ratio:24/7"></div></div>
     <div class="works-row-block"><div class="banner-row skel" style="aspect-ratio:24/7"></div></div>
   `;
 
@@ -707,17 +719,36 @@ async function renderWorks() {
     }, 3500);
   }
 
-  // ── Block 3: Post Cards ──
+  // ── Block 3: Post Cards (Marquee Banner) ──
   const postcardsRow = document.createElement('div');
   postcardsRow.className = 'works-row-block';
   const pr = document.createElement('div');
-  pr.className = 'banner-row';
+  
   if(pp && pp.length) {
+    pr.className = 'marquee-banner';
+    
+    // 從資料夾隨機抽取照片，確保有4張
+    let shuffledPc = [...pp].sort(() => 0.5 - Math.random());
+    while(shuffledPc.length < 4) {
+      shuffledPc = [...shuffledPc, ...shuffledPc]; 
+    }
+    let fourPhotos = shuffledPc.slice(0, 4);
+    
+    // 複製一份以達成無縫輪播 (共8張)
+    let trackPhotos = [...fourPhotos, ...fourPhotos];
+    
+    let imgsHtml = trackPhotos.map(p => `
+      <div class="marquee-img-wrap">
+        <img src="${p.thumb}" alt="" loading="lazy">
+      </div>
+    `).join('');
+    
     pr.innerHTML = `
-      <img src="${pp[0].thumb}" alt="">
+      <div class="marquee-track">${imgsHtml}</div>
       <div class="banner-label"><h2>Post Cards</h2><small>${pp.length} Photos</small></div>`;
     pr.onclick = () => openPostcards();
   } else {
+    pr.className = 'banner-row'; // fallback
     pr.innerHTML = `
       <div class="skel" style="width:100%;height:100%;position:absolute;inset:0;"></div>
       <div class="banner-label" style="z-index:10;"><h2>Post Cards</h2><small>${CONFIG.postcards ? 'Empty' : 'Setup Required'}</small></div>`;
