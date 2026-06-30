@@ -85,19 +85,21 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 .singles-thumb:hover img { filter: brightness(1); }
 .singles-card-wrap:hover .singles-thumb img { filter: brightness(.95); }
 
-.works-astro { width: 100%; }
-.astro-row { position: relative; overflow: hidden; background: var(--bg2); cursor: pointer; aspect-ratio: 24/7; }
-.astro-row img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.6) saturate(.7); transition: filter .5s, transform .6s; }
-.astro-row:hover img { filter: brightness(.8) saturate(1); transform: scale(1.03); }
+/* 共用 Row 樣式 (Astro & PostCards) */
+.works-row-block { width: 100%; }
+.banner-row { position: relative; overflow: hidden; background: var(--bg2); cursor: pointer; aspect-ratio: 24/7; }
+.banner-row img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.6) saturate(.7); transition: filter .5s, transform .6s; }
+.banner-row:hover img { filter: brightness(.8) saturate(1); transform: scale(1.03); }
 
 /* Block Labels & Coordinate Styling */
 .card-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; z-index: 10; display: flex; justify-content: space-between; align-items: flex-end; background: linear-gradient(transparent,rgba(0,0,0,.8)); }
 .card-label-info { display: flex; flex-direction: column; }
 .card-label-coord { font-family: var(--mono); font-size: 8px; letter-spacing: .15em; color: rgba(255,255,255,.4); text-align: right; line-height: 1.6; }
 .singles-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; z-index: 10; background: linear-gradient(transparent,rgba(0,0,0,.65)); pointer-events: none; }
-.astro-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; z-index: 10; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(transparent,rgba(0,0,0,.5)); pointer-events: none; }
-.card-label h2, .singles-label h2, .astro-label h2 { font-size: clamp(24px,3vw,40px); font-family: var(--serif); font-weight: 400; letter-spacing: -.01em; margin-bottom: 4px; }
-.card-label small, .singles-label small, .astro-label small { font-family: var(--mono); font-size: 9px; letter-spacing: .18em; color: rgba(255,255,255,.5); text-transform: uppercase; }
+.banner-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 28px; z-index: 10; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(transparent,rgba(0,0,0,.5)); pointer-events: none; }
+
+.card-label h2, .singles-label h2, .banner-label h2 { font-size: clamp(24px,3vw,40px); font-family: var(--serif); font-weight: 400; letter-spacing: -.01em; margin-bottom: 4px; }
+.card-label small, .singles-label small, .banner-label small { font-family: var(--mono); font-size: 9px; letter-spacing: .18em; color: rgba(255,255,255,.5); text-transform: uppercase; }
 
 /* ══ SINGLES MASONRY GRID ══ */
 .singles-grid { padding: 0 48px 80px; column-count: 4; column-gap: 2px; }
@@ -112,6 +114,13 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 .astro-item img { display: block; width: 100%; height: auto; object-fit: cover; filter: brightness(0.8) contrast(1.05); transition: filter 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform, filter; }
 .astro-item:hover img { filter: brightness(1) contrast(1); transform: scale(1.03); }
 .astro-item.skel { aspect-ratio: 4/5; }
+
+/* ══ POST CARDS 2-COLUMN GRID (大空隙) ══ */
+.postcards-grid { padding: 0 48px 80px; column-count: 2; column-gap: 6vw; max-width: 1400px; margin: 0 auto; }
+.pc-item { position: relative; overflow: hidden; cursor: pointer; break-inside: avoid; margin-bottom: 6vw; background: var(--bg2); }
+.pc-item img { display: block; width: 100%; height: auto; object-fit: cover; filter: brightness(0.8) contrast(1.05); transition: filter 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform, filter; }
+.pc-item:hover img { filter: brightness(1) contrast(1); transform: scale(1.03); }
+.pc-item.skel { aspect-ratio: 3/2; }
 
 /* ══ SERIES TABS & STRIPS ══ */
 .series-tabs { display: flex; gap: 16px; padding: 0 48px; border-bottom: 1px solid var(--border); overflow-x: auto; }
@@ -190,13 +199,13 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   .series-card { aspect-ratio: 4/3; }
   .singles-card-wrap { aspect-ratio: 1/1; }
   .singles-card { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-  .astro-row { aspect-ratio: 4/3; }
-  .series-tabs,.singles-grid{padding-left:24px;padding-right:24px;}
+  .banner-row { aspect-ratio: 4/3; }
+  .series-tabs,.singles-grid, .postcards-grid, .astro-grid {padding-left:24px;padding-right:24px;}
   .strip-block-label{padding:0 24px;}
   .film-col { width: 33.33%; min-width: 150px; } 
   .singles-grid { column-count: 2; padding: 0 24px 60px; }
-  .astro-grid { column-count: 1; padding: 0 24px 60px; column-gap: 0; }
-  .astro-item { margin-bottom: 24px; }
+  .postcards-grid, .astro-grid { column-count: 1; padding: 0 24px 60px; column-gap: 0; }
+  .pc-item, .astro-item { margin-bottom: 24px; }
 }
 @media(max-width:480px){ .singles-grid { column-count: 1; } }
 @media(prefers-reduced-motion:reduce){ .film-track, .strip { animation: none !important; transform: none !important; } }
@@ -251,6 +260,15 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   <div class="singles-grid" id="singles-grid"></div>
 </div>
 
+<div class="page" id="page-postcards">
+  <div class="detail-header">
+    <div class="back" onclick="goPage('works')">Works</div>
+    <h1 id="postcards-title">Post Cards</h1>
+    <div class="detail-meta" id="postcards-meta"></div>
+  </div>
+  <div class="postcards-grid" id="postcards-grid"></div>
+</div>
+
 <div class="page" id="page-astro">
   <div class="detail-header">
     <div class="back" onclick="goPage('works')">Works</div>
@@ -282,7 +300,9 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
       <div class="setup-section-title">Basic Info</div>
       <div class="inp-row"><label>Your Name</label><input class="inp" id="s-name" placeholder="Ryan"></div>
     </div>
+    
     <div id="dynamic-cities-wrapper"></div>
+    
     <div class="setup-section" style="border-top:1px solid var(--border); padding-top:20px; margin-top:-16px;">
       <span class="add-series-btn" onclick="addCitySetupBlock()" style="font-size:11px;">+ 新增一個城市區塊</span>
     </div>
@@ -290,6 +310,12 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
       <div class="setup-section-title">Street · Singles</div>
       <div class="inp-row"><label>Singles Folder Link</label><input class="inp" id="s-singles" placeholder="https://drive.google.com/drive/folders/..."></div>
     </div>
+    
+    <div class="setup-section">
+      <div class="setup-section-title">Post Cards</div>
+      <div class="inp-row"><label>Post Cards Folder Link</label><input class="inp" id="s-postcards" placeholder="https://drive.google.com/drive/folders/..."></div>
+    </div>
+
     <div class="setup-section">
       <div class="setup-section-title">Astro</div>
       <div class="inp-row"><label>Astro Folder Link</label><input class="inp" id="s-astro" placeholder="https://drive.google.com/drive/folders/..."></div>
@@ -311,11 +337,13 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 </div>
 
 <script>
+// ⬇️ 您未來的資料設定請直接覆蓋在這個 CONFIG 變數中 ⬇️
 let CONFIG = {
   "name": "Ryan",
   "cities": [
     {
       "name": "台灣",
+      "coord": "23.6978° N<br>120.9605° E",
       "series": [
         { "name": "合歡山", "url": "https://drive.google.com/drive/folders/1rEBKaoUBERf3IW-sEYt03TIFYe4T8v1O?usp=drive_link" },
         { "name": "Passion", "url": "https://drive.google.com/drive/folders/1d9wa4RwScys9zERN7gX-RE70VM85qXHD?usp=drive_link" },
@@ -330,12 +358,14 @@ let CONFIG = {
     },
     {
       "name": "東京",
+      "coord": "35.6762° N<br>139.6503° E",
       "series": [
         { "name": "霧雨の東京", "url": "https://drive.google.com/drive/folders/1dlIAGeoYtNvzAMSX3RpFQpuBFCZ2Zlmp?usp=drive_link" }
       ]
     },
     {
       "name": "Sydney",
+      "coord": "33.8688° S<br>151.2093° E",
       "series": [
         { "name": "Sydney", "url": "https://drive.google.com/drive/folders/1SAX5XS9cse1GLGn8aeMUlvs3q63ukh10?usp=drive_link" },
         { "name": "Sydney, shall we?", "url": "https://drive.google.com/drive/folders/1hiVDNpo2Yh2w4dkD1AF09--PBTchvTlc?usp=drive_link" },
@@ -349,6 +379,7 @@ let CONFIG = {
     },
     {
       "name": "名古屋",
+      "coord": "35.1815° N<br>136.9066° E",
       "series": [
         { "name": "夏祭", "url": "https://drive.google.com/drive/folders/1d4Wl6QMySx98X2xAt4mKFictGGmEG4Dn?usp=drive_link" },
         { "name": "Airport", "url": "https://drive.google.com/drive/folders/1tUI81t4AUP4LrDPC0LKJeDfl1ryCj5qo?usp=drive_link" },
@@ -357,12 +388,13 @@ let CONFIG = {
     }
   ],
   "singles": "https://drive.google.com/drive/folders/1dx_HAKYHhpmEGllWBd26GDyA-dKrjCuv?usp=drive_link",
+  "postcards": "", 
   "astro": "https://drive.google.com/drive/folders/1nJLWZobspWJu_6muaRKO-zdSjw5EfspK?usp=drive_link"
 };
+// ⬆️ 覆蓋到此結束 ⬆️
 
 let CACHE = {}; 
 
-// ══ 替換地圖：改用高質感的經緯度座標 ══
 function getCityCoordinates(cityName) {
   let n = cityName.toLowerCase();
   if (n.includes('台灣') || n.includes('taiwan') || n.includes('taipei') || n.includes('台北')) return "23.6978° N<br>120.9605° E";
@@ -371,7 +403,7 @@ function getCityCoordinates(cityName) {
   if (n.includes('京都') || n.includes('kyoto') || n.includes('osaka') || n.includes('大阪')) return "35.0116° N<br>135.7681° E";
   if (n.includes('sydney') || n.includes('雪梨') || n.includes('澳洲') || n.includes('australia')) return "33.8688° S<br>151.2093° E";
   if (n.includes('london') || n.includes('倫敦') || n.includes('uk')) return "51.5072° N<br>0.1276° W";
-  return ""; // 若找不到預設城市，則留白
+  return ""; 
 }
 
 const defaultPlaceholders = [
@@ -418,6 +450,8 @@ async function updateHeroBackground() {
   }
   let sId = extractId(CONFIG.singles);
   if(sId) { let p = await fetchFolder(sId); if(p) allPhotos.push(...p); }
+  let pcId = extractId(CONFIG.postcards);
+  if(pcId) { let p = await fetchFolder(pcId); if(p) allPhotos.push(...p); }
   let aId = extractId(CONFIG.astro);
   if(aId) { let p = await fetchFolder(aId); if(p) allPhotos.push(...p); }
   if(allPhotos.length > 0) { buildFilmstrip(allPhotos.map(p => p.thumb)); }
@@ -441,6 +475,7 @@ function loadConfig() {
       let parsed = JSON.parse(saved);
       CONFIG.name = parsed.name || 'Ryan';
       CONFIG.singles = parsed.singles || '';
+      CONFIG.postcards = parsed.postcards || '';
       CONFIG.astro = parsed.astro || '';
       if (parsed.cities) { CONFIG.cities = parsed.cities; }
     }
@@ -493,24 +528,26 @@ async function renderWorks() {
     <div class="works-cities" style="grid-template-columns: repeat(${numCities}, 1fr);">
       ${citySkels}
     </div>
-    <div class="works-singles"><div class="singles-card-wrap skel" style="aspect-ratio:24/7"></div></div>
-    <div class="works-astro"><div class="astro-row skel" style="aspect-ratio:24/7"></div></div>
+    <div class="works-row-block"><div class="singles-card-wrap skel" style="aspect-ratio:24/7"></div></div>
+    <div class="works-row-block"><div class="banner-row skel" style="aspect-ratio:24/7"></div></div>
+    <div class="works-row-block"><div class="banner-row skel" style="aspect-ratio:24/7"></div></div>
   `;
 
-  const promises = [
-    ...CONFIG.cities.map(c => getCityCover(c)),
-    fetchFolder(extractId(CONFIG.singles)),
-    fetchFolder(extractId(CONFIG.astro))
-  ];
+  const cityPromises = CONFIG.cities.map(c => getCityCover(c));
+  const singlesPromise = fetchFolder(extractId(CONFIG.singles));
+  const postcardsPromise = fetchFolder(extractId(CONFIG.postcards));
+  const astroPromise = fetchFolder(extractId(CONFIG.astro));
+
+  const results = await Promise.all([...cityPromises, singlesPromise, postcardsPromise, astroPromise]);
   
-  const results = await Promise.all(promises);
   const cityCovers = results.slice(0, numCities);
   const sp = results[numCities];
-  const ap = results[numCities + 1];
+  const pp = results[numCities + 1];
+  const ap = results[numCities + 2];
 
   list.innerHTML = '';
 
-  // ── 建立城市卡片，嵌入高質感地理坐標 ──
+  // ── Block 1: Cities ──
   const citiesRow = document.createElement('div');
   citiesRow.className = 'works-cities';
   citiesRow.style.gridTemplateColumns = `repeat(${numCities}, 1fr)`;
@@ -519,6 +556,9 @@ async function renderWorks() {
     const coverUrl = cityCovers[i];
     const sc = document.createElement('div');
     sc.className = 'series-card';
+    
+    let coordHtml = city.coord ? `<div class="card-label-coord">${city.coord}</div>` : '';
+
     if(city && city.series.length > 0 && coverUrl) {
       sc.innerHTML = `
         <img class="card-cover" src="${coverUrl}" alt="">
@@ -527,7 +567,7 @@ async function renderWorks() {
             <h2>${city.name}</h2>
             <small>${city.series.length} Collections</small>
           </div>
-          <div class="card-label-coord">${getCityCoordinates(city.name)}</div>
+          ${coordHtml}
         </div>`;
       sc.onclick = () => openCity(i);
     } else {
@@ -545,8 +585,9 @@ async function renderWorks() {
   }
   list.appendChild(citiesRow);
 
+  // ── Block 2: Singles ──
   const singlesRow = document.createElement('div');
-  singlesRow.className = 'works-singles';
+  singlesRow.className = 'works-row-block';
   const sw = document.createElement('div');
   sw.className = 'singles-card-wrap';
   const mosaic = document.createElement('div');
@@ -599,19 +640,39 @@ async function renderWorks() {
     }, 3500);
   }
 
+  // ── Block 3: Post Cards ──
+  const postcardsRow = document.createElement('div');
+  postcardsRow.className = 'works-row-block';
+  const pr = document.createElement('div');
+  pr.className = 'banner-row';
+  if(pp && pp.length) {
+    pr.innerHTML = `
+      <img src="${pp[0].thumb}" alt="">
+      <div class="banner-label"><h2>Post Cards</h2><small>${pp.length} Photos</small></div>`;
+    pr.onclick = () => openPostcards();
+  } else {
+    pr.innerHTML = `
+      <div class="skel" style="width:100%;height:100%;position:absolute;inset:0;"></div>
+      <div class="banner-label" style="z-index:10;"><h2>Post Cards</h2><small>${CONFIG.postcards ? 'Empty' : 'Setup Required'}</small></div>`;
+    pr.onclick = () => openSetup();
+  }
+  postcardsRow.appendChild(pr);
+  list.appendChild(postcardsRow);
+
+  // ── Block 4: Astro ──
   const astroRow = document.createElement('div');
-  astroRow.className = 'works-astro';
+  astroRow.className = 'works-row-block';
   const ar = document.createElement('div');
-  ar.className = 'astro-row';
+  ar.className = 'banner-row';
   if(ap && ap.length) {
     ar.innerHTML = `
       <img src="${ap[0].thumb}" alt="">
-      <div class="astro-label"><h2>Astro</h2><small>${ap.length} Photos</small></div>`;
+      <div class="banner-label"><h2>Astro</h2><small>${ap.length} Photos</small></div>`;
     ar.onclick = () => openAstro();
   } else {
     ar.innerHTML = `
       <div class="skel" style="width:100%;height:100%;position:absolute;inset:0;"></div>
-      <div class="astro-label" style="z-index:10;"><h2>Astro</h2><small>${CONFIG.astro ? 'Empty' : 'Setup Required'}</small></div>`;
+      <div class="banner-label" style="z-index:10;"><h2>Astro</h2><small>${CONFIG.astro ? 'Empty' : 'Setup Required'}</small></div>`;
     ar.onclick = () => openSetup();
   }
   astroRow.appendChild(ar);
@@ -684,6 +745,29 @@ async function openSingles() {
   });
 }
 
+// 開啟 Post Cards 頁面
+async function openPostcards() {
+  goPage('postcards');
+  const grid = document.getElementById('postcards-grid');
+  grid.innerHTML = '<div class="pc-item skel"></div>'.repeat(4);
+  const id = extractId(CONFIG.postcards);
+  const photos = id ? await fetchFolder(id) : null;
+  grid.innerHTML = '';
+  if(!photos||!photos.length){
+    grid.innerHTML = `<p class="empty-msg">${photos===null?'Failed to load':'No photos yet'}</p>`;
+    document.getElementById('postcards-meta').textContent = '';
+    return;
+  }
+  document.getElementById('postcards-meta').textContent = `${photos.length} photos`;
+  photos.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'pc-item';
+    item.innerHTML = `<img src="${p.thumb}" alt="" loading="lazy">`;
+    item.onclick = () => openLB(p.full, p.exif);
+    grid.appendChild(item);
+  });
+}
+
 async function openAstro() {
   goPage('astro');
   const grid = document.getElementById('astro-grid');
@@ -734,18 +818,19 @@ function openSetup() {
   const wrapper = document.getElementById('dynamic-cities-wrapper');
   wrapper.innerHTML = '';
   if (CONFIG.cities && CONFIG.cities.length > 0) {
-    CONFIG.cities.forEach((c) => addCitySetupBlock(c.name, c.series));
+    CONFIG.cities.forEach((c) => addCitySetupBlock(c.name, c.coord || '', c.series));
   } else {
     addCitySetupBlock();
   }
   document.getElementById('s-singles').value = CONFIG.singles;
+  document.getElementById('s-postcards').value = CONFIG.postcards || '';
   document.getElementById('s-astro').value = CONFIG.astro;
   document.getElementById('outputSection').style.display = 'none';
   document.getElementById('setup-overlay').classList.add('open');
 }
 function closeSetup() { document.getElementById('setup-overlay').classList.remove('open'); }
 
-function addCitySetupBlock(cityName = '', seriesData = []) {
+function addCitySetupBlock(cityName = '', cityCoord = '', seriesData = []) {
   const wrapper = document.getElementById('dynamic-cities-wrapper');
   const cityIndex = wrapper.children.length;
   const section = document.createElement('div');
@@ -755,7 +840,10 @@ function addCitySetupBlock(cityName = '', seriesData = []) {
       <span>City ${cityIndex + 1}</span>
       <span class="del-btn" style="cursor:pointer; color:var(--fg-dim);" onclick="this.closest('.city-setup-block').remove()">✕ 移除城市</span>
     </div>
-    <div class="inp-row"><label>City Name</label><input class="inp city-name-inp" placeholder="City Name" value="${cityName}"></div>
+    <div class="inp-row" style="display:flex; gap:8px;">
+        <div style="flex:1;"><label>City Name</label><input class="inp city-name-inp" placeholder="City Name" value="${cityName}"></div>
+        <div style="flex:1;"><label>座標 Coord (選填)</label><input class="inp city-coord-inp" placeholder="例如: 35.67° N<br>139.65° E" value="${cityCoord}"></div>
+    </div>
     <div class="inp-row"><label>Series Sub-folders</label></div>
     <div class="city-series-inputs"></div>
     <span class="add-series-btn" onclick="addCitySeriesRow(this.previousElementSibling)">+ Add Series</span>
@@ -782,11 +870,13 @@ function addCitySeriesRow(container, name='', url='') {
 function generateConfig() {
   const newName = document.getElementById('s-name').value.trim() || 'Ryan';
   const newSingles = document.getElementById('s-singles').value.trim();
+  const newPostcards = document.getElementById('s-postcards').value.trim();
   const newAstro = document.getElementById('s-astro').value.trim();
   const newCities = [];
   const cityBlocks = document.querySelectorAll('.city-setup-block');
   cityBlocks.forEach((block, idx) => {
     let n = block.querySelector('.city-name-inp').value.trim();
+    let coord = block.querySelector('.city-coord-inp').value.trim();
     const rows = block.querySelectorAll('.series-row');
     const seriesData = [];
     rows.forEach(row => {
@@ -794,9 +884,9 @@ function generateConfig() {
       const sUrl = row.querySelector('.url-inp').value.trim();
       if (sName && sUrl) seriesData.push({name: sName, url: sUrl});
     });
-    newCities.push({name: n || `City ${idx+1}`, series: seriesData});
+    newCities.push({name: n || `City ${idx+1}`, coord: coord, series: seriesData});
   });
-  const generatedObj = { name: newName, cities: newCities, singles: newSingles, astro: newAstro };
+  const generatedObj = { name: newName, cities: newCities, singles: newSingles, postcards: newPostcards, astro: newAstro };
   const codeString = `let CONFIG = ${JSON.stringify(generatedObj, null, 2)};`;
   const configOutput = document.getElementById('configOutput');
   configOutput.value = codeString;
