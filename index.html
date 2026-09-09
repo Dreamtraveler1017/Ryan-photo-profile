@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ryan · Photography</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Noto+Serif+JP:wght@300;400&family=Noto+Serif+TC:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Noto+Serif+JP:wght@300;400&family=Noto+Serif+TC:wght@300;400&family=Special+Elite&family=VT323&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -82,7 +82,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 .singles-card { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr; gap: 3px; height: 100%; }
 .singles-thumb { position: relative; overflow: hidden; background: var(--bg2); width: 100%; height: 100%; }
 .singles-thumb img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.8); transition: opacity 1.2s ease-in-out, filter .4s; }
-.singles-thumb:hover img { filter: brightness(1); }
+.singles-thumb:hover img { filter: brightness(.95); }
 .singles-card-wrap:hover .singles-thumb img { filter: brightness(.95); }
 
 /* 共用 Row 樣式 (Astro) */
@@ -201,6 +201,48 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .empty-msg{font-family:var(--mono);font-size:10px;color:var(--fg-dim);letter-spacing:.1em;padding:40px 48px;}
 
+/* ══ LIFE IS A MOVIE ══ */
+/* 打字機字體當標題（劇本本來就是用 Courier/Typewriter 打的），
+   VHS 攝影機錄影時的紅點+計時碼當視覺語言 —— 呼應「人生是一部電影」 */
+h1.movie-title, h2.movie-title {
+  font-family: 'Special Elite', var(--serif);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: #f2efe8;
+  text-shadow: 1px 0 0 rgba(255,59,59,.45), -1px 0 0 rgba(80,210,255,.35);
+}
+.movie-banner:hover h2.movie-title { animation: vhsFlicker .5s steps(2) 1; }
+@keyframes vhsFlicker { 0%,100%{transform:translateX(0)} 50%{transform:translateX(1px) skewX(-1deg)} }
+
+.rec-indicator{ display:flex; align-items:center; gap:8px; font-family:'VT323',var(--mono); font-size:17px; letter-spacing:.04em; line-height:1; }
+.rec-dot{ width:8px; height:8px; border-radius:50%; background:#ff3b3b; box-shadow:0 0 8px rgba(255,59,59,.85); animation:recBlink 1s steps(1) infinite; flex-shrink:0; }
+@keyframes recBlink{ 0%,49%{opacity:1} 50%,100%{opacity:.15} }
+.rec-timestamp{ color:#e9e6e0; opacity:.85; }
+
+.movie-banner{ position:relative; }
+.movie-banner::after{
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:6;
+  background:repeating-linear-gradient(to bottom, rgba(255,255,255,.05) 0px, rgba(255,255,255,.05) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode:overlay; opacity:.6;
+}
+
+.movie-grid{ padding:0 48px 80px; display:grid; grid-template-columns:repeat(2,1fr); gap:14px; max-width:1400px; margin:0 auto; }
+.mv-item{ position:relative; overflow:hidden; cursor:pointer; background:var(--bg2); aspect-ratio:16/9; }
+.mv-item img{ width:100%; height:100%; object-fit:cover; filter:brightness(.7) saturate(.85); transition:filter .4s,transform .5s; }
+.mv-item:hover img{ filter:brightness(.9) saturate(1); transform:scale(1.02); }
+.mv-item.skel{ aspect-ratio:16/9; }
+.mv-play{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+.mv-play svg{ width:44px; height:44px; filter:drop-shadow(0 2px 14px rgba(0,0,0,.7)); transition:transform .3s; }
+.mv-item:hover .mv-play svg{ transform:scale(1.08); }
+.mv-label{ position:absolute; bottom:0; left:0; right:0; padding:16px 18px; z-index:10; background:linear-gradient(transparent,rgba(0,0,0,.75)); font-family:'VT323',var(--mono); font-size:15px; letter-spacing:.03em; color:#eee; pointer-events:none; }
+
+#video-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:300;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+#video-lightbox.open{display:flex;}
+.vlb-frame-wrap{ width:min(90vw,1100px); aspect-ratio:16/9; background:#000; box-shadow:0 0 80px rgba(0,0,0,.8); }
+.vlb-frame-wrap iframe{ width:100%; height:100%; border:0; }
+#video-lightbox .lb-close{position:fixed;top:24px;right:32px;font-family:var(--mono);font-size:10px;color:var(--fg-dim);cursor:pointer;letter-spacing:.1em;}
+#video-lightbox .lb-close:hover{color:var(--fg);}
+
 /* ══ RESPONSIVE ══ */
 @media(max-width:1200px){ .singles-grid { column-count: 3; } }
 @media(max-width:768px){
@@ -219,6 +261,7 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   .singles-grid { column-count: 2; padding: 0 24px 60px; }
   .postcards-grid, .astro-grid { column-count: 1; padding: 0 24px 60px; column-gap: 0; }
   .pc-item, .astro-item { margin-bottom: 24px; }
+  .movie-grid { grid-template-columns: 1fr; padding: 0 24px 60px; }
 }
 @media(max-width:480px){ .singles-grid { column-count: 1; } }
 @media(prefers-reduced-motion:reduce){ .film-track, .strip, .marquee-track { animation: none !important; transform: none !important; } }
@@ -291,6 +334,16 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   <div class="astro-grid" id="astro-grid"></div>
 </div>
 
+<div class="page" id="page-movie">
+  <div class="detail-header">
+    <div class="back" onclick="goPage('works')">Works</div>
+    <h1 class="movie-title">Life is a movie</h1>
+    <div class="rec-indicator" style="margin-top:10px;"><span class="rec-dot"></span><span class="rec-timestamp">00:00:00</span></div>
+    <div class="detail-meta" id="movie-meta" style="margin-top:14px;"></div>
+  </div>
+  <div class="movie-grid" id="movie-grid"></div>
+</div>
+
 <div class="page" id="page-about">
   <div class="about-wrap">
     <h1 id="about-name">Ryan</h1>
@@ -333,6 +386,12 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
       <div class="setup-section-title">Astro</div>
       <div class="inp-row"><label>Astro Folder Link</label><input class="inp" id="s-astro" placeholder="https://drive.google.com/drive/folders/..."></div>
     </div>
+
+    <div class="setup-section">
+      <div class="setup-section-title">Life is a Movie</div>
+      <p class="setup-desc" style="margin-bottom:12px;">同樣建立一個 Google Drive 資料夾，裡面放影片檔案（mp4/mov），設成「知道連結的使用者均可查看」。</p>
+      <div class="inp-row"><label>Movie Folder Link</label><input class="inp" id="s-movie" placeholder="https://drive.google.com/drive/folders/..."></div>
+    </div>
     <button class="btn-save" onclick="generateConfig()">Generate Config Code →</button>
     <div id="outputSection" style="display:none; margin-top: 32px;">
       <div class="setup-section-title" style="border:none; margin-bottom:8px; color:var(--accent);">Generated Code (產生結果)</div>
@@ -347,6 +406,11 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
   <div class="lb-close">[ ESC ]</div>
   <img id="lb-img" src="" alt="">
   <div class="lb-meta" id="lb-meta"></div>
+</div>
+
+<div id="video-lightbox">
+  <div class="lb-close" onclick="closeVLB()">[ ESC ]</div>
+  <div class="vlb-frame-wrap"><iframe id="vlb-frame" src="" allow="autoplay; fullscreen" allowfullscreen></iframe></div>
 </div>
 
 <script>
@@ -487,11 +551,14 @@ let CONFIG = {
   ],
   "singles": "https://drive.google.com/drive/folders/1dx_HAKYHhpmEGllWBd26GDyA-dKrjCuv?usp=drive_link",
   "postcards": "https://drive.google.com/drive/folders/1IiwGRQ_cvMBtDUarcYJD_Y8LX7JIYzbj?usp=drive_link",
-  "astro": "https://drive.google.com/drive/folders/1nJLWZobspWJu_6muaRKO-zdSjw5EfspK?usp=drive_link"
+  "astro": "https://drive.google.com/drive/folders/1nJLWZobspWJu_6muaRKO-zdSjw5EfspK?usp=drive_link",
+  "movie": ""
 };
 // ⬆️ 覆蓋到此結束 ⬆️
+// 「movie」請貼上放影片的 Google Drive 資料夾連結（記得資料夾要設成任何人皆可查看）
 
 let CACHE = {}; 
+let VCACHE = {}; 
 
 function getCityCoordinates(cityName) {
   let n = cityName.toLowerCase();
@@ -575,6 +642,7 @@ function loadConfig() {
       CONFIG.singles = parsed.singles || '';
       CONFIG.postcards = parsed.postcards || '';
       CONFIG.astro = parsed.astro || '';
+      CONFIG.movie = parsed.movie || '';
       if (parsed.cities) { CONFIG.cities = parsed.cities; }
     }
   } catch(e){}
@@ -608,6 +676,31 @@ async function fetchFolder(folderId) {
   } catch(e) { return null; }
 }
 
+async function fetchVideoFolder(folderId) {
+  if(!folderId) return [];
+  if(VCACHE[folderId]) return VCACHE[folderId];
+  try {
+    let videos = [], pageToken = '';
+    do {
+      const params = new URLSearchParams({
+        key: API_KEY, q: `'${folderId}' in parents and mimeType contains 'video/' and trashed = false`,
+        fields: 'nextPageToken, files(id, name)', orderBy: 'name', pageSize: 100, ...(pageToken ? {pageToken} : {})
+      });
+      const resp = await fetch(`https://www.googleapis.com/drive/v3/files?${params}`);
+      if(!resp.ok) throw new Error('API error');
+      const data = await resp.json();
+      const batch = (data.files || []).map(f => ({
+        id: f.id, name: f.name,
+        thumb: `https://drive.google.com/thumbnail?id=${f.id}&sz=w800`,
+        embed: `https://drive.google.com/file/d/${f.id}/preview`
+      }));
+      videos = videos.concat(batch);
+      pageToken = data.nextPageToken || '';
+    } while(pageToken);
+    VCACHE[folderId] = videos; return videos;
+  } catch(e) { return null; }
+}
+
 async function getCityCover(city) {
   if (!city || !city.series || city.series.length === 0) return null;
   const promises = city.series.map(s => fetchFolder(extractId(s.url)));
@@ -627,21 +720,24 @@ async function renderWorks() {
       ${citySkels}
     </div>
     <div class="works-row-block"><div class="singles-card-wrap skel" style="aspect-ratio:24/7"></div></div>
+    <div class="works-row-block"><div class="banner-row skel" style="aspect-ratio:24/7"></div></div>
     <div class="works-row-block"><div class="marquee-banner skel" style="aspect-ratio:24/7"></div></div>
     <div class="works-row-block"><div class="banner-row skel" style="aspect-ratio:24/7"></div></div>
   `;
 
   const cityPromises = CONFIG.cities.map(c => getCityCover(c));
   const singlesPromise = fetchFolder(extractId(CONFIG.singles));
+  const moviePromise = fetchVideoFolder(extractId(CONFIG.movie));
   const postcardsPromise = fetchFolder(extractId(CONFIG.postcards));
   const astroPromise = fetchFolder(extractId(CONFIG.astro));
 
-  const results = await Promise.all([...cityPromises, singlesPromise, postcardsPromise, astroPromise]);
+  const results = await Promise.all([...cityPromises, singlesPromise, moviePromise, postcardsPromise, astroPromise]);
   
   const cityCovers = results.slice(0, numCities);
   const sp = results[numCities];
-  const pp = results[numCities + 1];
-  const ap = results[numCities + 2];
+  const mv = results[numCities + 1];
+  const pp = results[numCities + 2];
+  const ap = results[numCities + 3];
 
   list.innerHTML = '';
 
@@ -738,7 +834,31 @@ async function renderWorks() {
     }, 3500);
   }
 
-  // ── Block 3: Post Cards (Marquee Banner) ──
+  // ── Block 3: Life is a Movie ──
+  const movieRow = document.createElement('div');
+  movieRow.className = 'works-row-block';
+  const mr = document.createElement('div');
+  if(mv && mv.length) {
+    mr.className = 'banner-row movie-banner';
+    mr.innerHTML = `
+      <img src="${mv[0].thumb}" alt="">
+      <div class="banner-label">
+        <div class="rec-indicator" style="margin-bottom:10px;"><span class="rec-dot"></span><span class="rec-timestamp">00:00:00</span></div>
+        <h2 class="movie-title">Life is a movie</h2>
+        <small>${mv.length} Clips</small>
+      </div>`;
+    mr.onclick = () => openMovie();
+  } else {
+    mr.className = 'banner-row';
+    mr.innerHTML = `
+      <div class="skel" style="width:100%;height:100%;position:absolute;inset:0;"></div>
+      <div class="banner-label" style="z-index:10;"><h2 class="movie-title">Life is a movie</h2><small>${CONFIG.movie ? 'Empty' : 'Setup Required'}</small></div>`;
+    mr.onclick = () => openSetup();
+  }
+  movieRow.appendChild(mr);
+  list.appendChild(movieRow);
+
+  // ── Block 4: Post Cards (Marquee Banner) ──
   const postcardsRow = document.createElement('div');
   postcardsRow.className = 'works-row-block';
   const pr = document.createElement('div');
@@ -786,7 +906,7 @@ async function renderWorks() {
   postcardsRow.appendChild(pr);
   list.appendChild(postcardsRow);
 
-  // ── Block 4: Astro ──
+  // ── Block 5: Astro ──
   const astroRow = document.createElement('div');
   astroRow.className = 'works-row-block';
   const ar = document.createElement('div');
@@ -917,6 +1037,40 @@ async function openAstro() {
   });
 }
 
+async function openMovie() {
+  goPage('movie');
+  const grid = document.getElementById('movie-grid');
+  grid.innerHTML = '<div class="mv-item skel"></div>'.repeat(4);
+  const id = extractId(CONFIG.movie);
+  const videos = id ? await fetchVideoFolder(id) : null;
+  grid.innerHTML = '';
+  if(!videos || !videos.length) {
+    grid.innerHTML = `<p class="empty-msg">${videos===null?'Failed to load':'No clips yet'}</p>`;
+    document.getElementById('movie-meta').textContent = '';
+    return;
+  }
+  document.getElementById('movie-meta').textContent = `${videos.length} clips`;
+  videos.forEach(v => {
+    const item = document.createElement('div');
+    item.className = 'mv-item';
+    item.innerHTML = `
+      <img src="${v.thumb}" alt="" loading="lazy">
+      <div class="mv-play"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="rgba(0,0,0,.45)" stroke="rgba(255,255,255,.85)" stroke-width="1"/><path d="M9.5 8l7 4-7 4z" fill="rgba(255,255,255,.9)"/></svg></div>
+      <div class="mv-label">${v.name}</div>`;
+    item.onclick = () => openVLB(v.embed);
+    grid.appendChild(item);
+  });
+}
+
+function openVLB(src) {
+  document.getElementById('vlb-frame').src = src;
+  document.getElementById('video-lightbox').classList.add('open');
+}
+function closeVLB() {
+  document.getElementById('video-lightbox').classList.remove('open');
+  document.getElementById('vlb-frame').src = '';
+}
+
 function makeStripBlock(container, photos, cls, w, h, reverse) {
   const block = document.createElement('div');
   block.className = 'strip-block';
@@ -952,6 +1106,7 @@ function openSetup() {
   document.getElementById('s-singles').value = CONFIG.singles;
   document.getElementById('s-postcards').value = CONFIG.postcards || '';
   document.getElementById('s-astro').value = CONFIG.astro;
+  document.getElementById('s-movie').value = CONFIG.movie || '';
   document.getElementById('outputSection').style.display = 'none';
   document.getElementById('setup-overlay').classList.add('open');
 }
@@ -999,6 +1154,7 @@ function generateConfig() {
   const newSingles = document.getElementById('s-singles').value.trim();
   const newPostcards = document.getElementById('s-postcards').value.trim();
   const newAstro = document.getElementById('s-astro').value.trim();
+  const newMovie = document.getElementById('s-movie').value.trim();
   const newCities = [];
   const cityBlocks = document.querySelectorAll('.city-setup-block');
   cityBlocks.forEach((block, idx) => {
@@ -1013,7 +1169,7 @@ function generateConfig() {
     });
     newCities.push({name: n || `City ${idx+1}`, coord: coord, series: seriesData});
   });
-  const generatedObj = { name: newName, cities: newCities, singles: newSingles, postcards: newPostcards, astro: newAstro };
+  const generatedObj = { name: newName, cities: newCities, singles: newSingles, postcards: newPostcards, astro: newAstro, movie: newMovie };
   const codeString = `let CONFIG = ${JSON.stringify(generatedObj, null, 2)};`;
   const configOutput = document.getElementById('configOutput');
   configOutput.value = codeString;
@@ -1035,7 +1191,7 @@ function openLB(src, meta) {
 function closeLB() { document.getElementById('lightbox').classList.remove('open'); }
 
 window.addEventListener('scroll',()=>{ document.getElementById('topnav').classList.toggle('scrolled', window.scrollY>20); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeLB(); closeSetup(); } });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeLB(); closeVLB(); closeSetup(); } });
 
 // ══ BOOT ════════════════════════════════════════════════════════
 document.getElementById('about-name').textContent = CONFIG.name;
@@ -1044,6 +1200,17 @@ document.querySelector('.nav-logo').textContent = CONFIG.name + ' · Photography
 
 buildFilmstrip(defaultPlaceholders);
 updateHeroBackground();
+
+// 「Life is a movie」的錄影計時碼 — 從打開頁面那一刻開始跑
+const recStart = Date.now();
+setInterval(() => {
+  const diff = Math.floor((Date.now() - recStart) / 1000);
+  const hh = String(Math.floor(diff/3600)).padStart(2,'0');
+  const mm = String(Math.floor((diff%3600)/60)).padStart(2,'0');
+  const ss = String(diff%60).padStart(2,'0');
+  const ts = `${hh}:${mm}:${ss}`;
+  document.querySelectorAll('.rec-timestamp').forEach(el => el.textContent = ts);
+}, 1000);
 </script>
 </body>
 </html>
