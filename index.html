@@ -88,8 +88,8 @@ nav.top.scrolled{border-color:var(--border);background:rgba(13,13,13,.9);backdro
 /* 共用 Row 樣式 (Astro) */
 .works-row-block { width: 100%; }
 .banner-row { position: relative; overflow: hidden; background: var(--bg2); cursor: pointer; aspect-ratio: 24/7; }
-.banner-row img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.6) saturate(.7); transition: filter .5s, transform .6s; }
-.banner-row:hover img { filter: brightness(.8) saturate(1); transform: scale(1.03); }
+.banner-row img, .banner-row video { width: 100%; height: 100%; object-fit: cover; filter: brightness(.6) saturate(.7); transition: filter .5s, transform .6s; }
+.banner-row:hover img, .banner-row:hover video { filter: brightness(.8) saturate(1); transform: scale(1.03); }
 
 /* ══ POST CARDS MARQUEE BANNER ══ */
 .marquee-banner { position: relative; overflow: hidden; background: var(--bg2); cursor: pointer; aspect-ratio: 24/7; }
@@ -217,7 +217,7 @@ h1.movie-title, h2.movie-title {
 .rec-indicator{ display:flex; align-items:center; gap:8px; font-family:'VT323',var(--mono); font-size:17px; letter-spacing:.04em; line-height:1; }
 .rec-dot{ width:8px; height:8px; border-radius:50%; background:#ff3b3b; box-shadow:0 0 8px rgba(255,59,59,.85); animation:recBlink 1s steps(1) infinite; flex-shrink:0; }
 @keyframes recBlink{ 0%,49%{opacity:1} 50%,100%{opacity:.15} }
-.rec-timestamp{ color:#e9e6e0; opacity:.85; }
+.rec-timestamp{ color:#e9e6e0; opacity:.85; display:inline-block; transform:scaleY(.82); transform-origin:center; }
 
 .movie-banner{ position:relative; }
 .movie-banner::after{
@@ -239,9 +239,10 @@ h1.movie-title, h2.movie-title {
 #video-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:300;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
 #video-lightbox.open{display:flex;}
 .vlb-frame-wrap{ width:min(90vw,1100px); aspect-ratio:16/9; background:#000; box-shadow:0 0 80px rgba(0,0,0,.8); }
-.vlb-frame-wrap iframe{ width:100%; height:100%; border:0; }
+.vlb-frame-wrap video{ width:100%; height:100%; object-fit:contain; background:#000; }
 #video-lightbox .lb-close{position:fixed;top:24px;right:32px;font-family:var(--mono);font-size:10px;color:var(--fg-dim);cursor:pointer;letter-spacing:.1em;}
 #video-lightbox .lb-close:hover{color:var(--fg);}
+#video-lightbox .lb-meta{font-family:var(--mono);font-size:9px;color:var(--fg-dim);letter-spacing:.1em;text-align:center;max-width:90vw;}
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:1200px){ .singles-grid { column-count: 3; } }
@@ -337,7 +338,7 @@ h1.movie-title, h2.movie-title {
 <div class="page" id="page-movie">
   <div class="detail-header">
     <div class="back" onclick="goPage('works')">Works</div>
-    <h1 class="movie-title">Life is a movie</h1>
+    <h1 class="movie-title">LIFE IS A MOVIE</h1>
     <div class="rec-indicator" style="margin-top:10px;"><span class="rec-dot"></span><span class="rec-timestamp">00:00:00</span></div>
     <div class="detail-meta" id="movie-meta" style="margin-top:14px;"></div>
   </div>
@@ -410,7 +411,8 @@ h1.movie-title, h2.movie-title {
 
 <div id="video-lightbox">
   <div class="lb-close" onclick="closeVLB()">[ ESC ]</div>
-  <div class="vlb-frame-wrap"><iframe id="vlb-frame" src="" allow="autoplay; fullscreen" allowfullscreen></iframe></div>
+  <div class="vlb-frame-wrap"><video id="vlb-video" controls autoplay playsinline></video></div>
+  <div class="lb-meta" id="vlb-meta"></div>
 </div>
 
 <script>
@@ -552,7 +554,7 @@ let CONFIG = {
   "singles": "https://drive.google.com/drive/folders/1dx_HAKYHhpmEGllWBd26GDyA-dKrjCuv?usp=drive_link",
   "postcards": "https://drive.google.com/drive/folders/1IiwGRQ_cvMBtDUarcYJD_Y8LX7JIYzbj?usp=drive_link",
   "astro": "https://drive.google.com/drive/folders/1nJLWZobspWJu_6muaRKO-zdSjw5EfspK?usp=drive_link",
-  "movie": "https://drive.google.com/drive/folders/1tK_EWOswK9lEIUftqO-ZhAIKSOjg-DPS?usp=drive_link"
+  "movie": ""
 };
 // ⬆️ 覆蓋到此結束 ⬆️
 // 「movie」請貼上放影片的 Google Drive 資料夾連結（記得資料夾要設成任何人皆可查看）
@@ -692,7 +694,8 @@ async function fetchVideoFolder(folderId) {
       const batch = (data.files || []).map(f => ({
         id: f.id, name: f.name,
         thumb: `https://drive.google.com/thumbnail?id=${f.id}&sz=w800`,
-        embed: `https://drive.google.com/file/d/${f.id}/preview`
+        embed: `https://drive.google.com/file/d/${f.id}/preview`,
+        direct: `https://www.googleapis.com/drive/v3/files/${f.id}?alt=media&key=${API_KEY}`
       }));
       videos = videos.concat(batch);
       pageToken = data.nextPageToken || '';
@@ -840,19 +843,27 @@ async function renderWorks() {
   const mr = document.createElement('div');
   if(mv && mv.length) {
     mr.className = 'banner-row movie-banner';
+    const previewClip = mv[Math.floor(Math.random() * mv.length)];
     mr.innerHTML = `
-      <img src="${mv[0].thumb}" alt="">
+      <video class="movie-preview-video" src="${previewClip.direct}" poster="${previewClip.thumb}" autoplay muted loop playsinline preload="auto"></video>
       <div class="banner-label">
         <div class="rec-indicator" style="margin-bottom:10px;"><span class="rec-dot"></span><span class="rec-timestamp">00:00:00</span></div>
-        <h2 class="movie-title">Life is a movie</h2>
+        <h2 class="movie-title">LIFE IS A MOVIE</h2>
         <small>${mv.length} Clips</small>
       </div>`;
     mr.onclick = () => openMovie();
+    const previewVideoEl = mr.querySelector('.movie-preview-video');
+    previewVideoEl.addEventListener('error', () => {
+      const img = document.createElement('img');
+      img.src = previewClip.thumb;
+      img.alt = '';
+      previewVideoEl.replaceWith(img);
+    }, { once: true });
   } else {
     mr.className = 'banner-row';
     mr.innerHTML = `
       <div class="skel" style="width:100%;height:100%;position:absolute;inset:0;"></div>
-      <div class="banner-label" style="z-index:10;"><h2 class="movie-title">Life is a movie</h2><small>${CONFIG.movie ? 'Empty' : 'Setup Required'}</small></div>`;
+      <div class="banner-label" style="z-index:10;"><h2 class="movie-title">LIFE IS A MOVIE</h2><small>${CONFIG.movie ? 'Empty' : 'Setup Required'}</small></div>`;
     mr.onclick = () => openSetup();
   }
   movieRow.appendChild(mr);
@@ -1057,18 +1068,32 @@ async function openMovie() {
       <img src="${v.thumb}" alt="" loading="lazy">
       <div class="mv-play"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="rgba(0,0,0,.45)" stroke="rgba(255,255,255,.85)" stroke-width="1"/><path d="M9.5 8l7 4-7 4z" fill="rgba(255,255,255,.9)"/></svg></div>
       <div class="mv-label">${v.name}</div>`;
-    item.onclick = () => openVLB(v.embed);
+    item.onclick = () => openVLB(v);
     grid.appendChild(item);
   });
 }
 
-function openVLB(src) {
-  document.getElementById('vlb-frame').src = src;
+function openVLB(v) {
+  const vid = document.getElementById('vlb-video');
+  const meta = document.getElementById('vlb-meta');
+  vid.poster = v.thumb || '';
+  vid.src = v.direct;
+  meta.textContent = v.name || '';
+  vid.load();
+  const playPromise = vid.play();
+  if (playPromise) playPromise.catch(() => {});
+  vid.onerror = () => {
+    meta.innerHTML = `無法直接播放此影片，<a href="https://drive.google.com/file/d/${v.id}/view" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">改用 Google Drive 開啟</a>`;
+  };
   document.getElementById('video-lightbox').classList.add('open');
 }
 function closeVLB() {
+  const vid = document.getElementById('vlb-video');
+  vid.pause();
+  vid.removeAttribute('src');
+  vid.load();
+  document.getElementById('vlb-meta').textContent = '';
   document.getElementById('video-lightbox').classList.remove('open');
-  document.getElementById('vlb-frame').src = '';
 }
 
 function makeStripBlock(container, photos, cls, w, h, reverse) {
